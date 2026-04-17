@@ -12,5 +12,10 @@ export const apiRequest = async (endpoint, options = {}) => {
     ...options,
   });
 
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || `HTTP error ${res.status}`);
+  }
+
   return res.json();
 };
