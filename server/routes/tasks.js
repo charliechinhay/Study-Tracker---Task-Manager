@@ -25,7 +25,12 @@ router.post("/", auth, async (req, res) => {
       return res.status(400).json({ message: "Title is required" });
     }
 
-    const task = await Task.create({ title, priority, dueDate });
+    const task = await Task.create({
+      user: req.user.id,
+      title,
+      priority,
+      dueDate,
+    });
     res.status(201).json(task);
   } catch (err) {
     res.status(500).json({ message: "Server error" });
@@ -33,5 +38,36 @@ router.post("/", auth, async (req, res) => {
 });
 
 // PATCH / api / tasks /: id - update a task
+router.patch("/:id", auth, async (req, res) => {
+  try {
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.id },
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+    res.json(task);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// DELETE / api / tasks / : id  - delete a task
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    const task = await Task.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user.id,
+    });
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+    res.json({ message: "Task deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 export default router;
