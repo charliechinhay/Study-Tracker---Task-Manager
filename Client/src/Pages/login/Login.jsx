@@ -21,10 +21,12 @@ function Login() {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
+
       localStorage.setItem("token", data.token);
       navigate("/dashboard");
     } catch (error) {
       console.error("Login failed:", error);
+
       setError(
         "Login failed. Please check your credentials and try again. " +
           error.message,
