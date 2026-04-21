@@ -2,7 +2,8 @@ const BASE_URL = "http://localhost:5000/api";
 
 export const apiRequest = async (endpoint, options = {}) => {
   const token = localStorage.getItem("token");
-  const res = await fetch(`${BASE_URL}/${endpoint}`, {
+  const cleanEndPoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
+  const res = await fetch(`${BASE_URL}/${cleanEndPoint}`, {
     headers: {
       "content-type": "application/json",
       Authorization: token ? `Bearer ${token}` : "",
