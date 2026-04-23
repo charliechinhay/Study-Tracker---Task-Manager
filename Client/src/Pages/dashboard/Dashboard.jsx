@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { apiRequest } from "../../services/api";
 import TaskCard from "../../components/taskCard/TaskCard";
 import TaskForm from "../../components/taskForm/TaskForm";
+import EditTaskModal from "../../components/editTaskModal/EditTaskModal";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [editingTask, setEditingTask] = useState(null);
 
   useEffect(() => {
     apiRequest("tasks")
@@ -46,6 +48,23 @@ function Dashboard() {
       setTasks((prev) =>
         prev.map((t) => (t._id === updated._id ? updated : t)),
       );
+    } catch {
+      setError("Failed to update task.");
+    }
+  };
+
+  const handleEdit = async (tasks) => {
+    setEditingTask(tasks);
+  };
+
+  const handleEditSave = async (updatedTask) => {
+    try {
+      const saved = await apiRequest(`tasks/${updatedTask._id}`, {
+        method: "PATCH",
+        body: JSON.stringify(updatedTask),
+      });
+      setTasks((prev) => prev.map((t) => (t._id === saved._id ? saved : t)));
+      setEditingTask(null);
     } catch {
       setError("Failed to update task.");
     }
@@ -113,8 +132,16 @@ function Dashboard() {
             task={task}
             onDelete={handleDelete}
             onToggle={handleToggle}
+            onEdit={handleEdit}
           />
         ))
+      )}
+      {editingTask && (
+        <EditTaskModal
+          task={editingTask}
+          onClose={() => setEditingTask(null)}
+          onSave={handleEditSave}
+        />
       )}
     </div>
   );

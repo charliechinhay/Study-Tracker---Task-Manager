@@ -1,4 +1,4 @@
-function TaskCard({ task, onDelete, onToggle }) {
+function TaskCard({ task, onDelete, onToggle, onEdit }) {
   const priorityBadge = {
     low: "success",
     medium: "warning",
@@ -46,10 +46,16 @@ function TaskCard({ task, onDelete, onToggle }) {
               {task.completed ? "Undo" : "Done"}
             </button>
             <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={() => onEdit(task)}
+            >
+              ✏️ Edit
+            </button>
+            <button
               className="btn btn-sm btn-outline-danger"
               onClick={() => onDelete(task._id)}
             >
-              Delete
+              🗑 Delete
             </button>
           </div>
         </div>
