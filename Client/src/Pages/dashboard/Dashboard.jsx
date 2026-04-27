@@ -10,6 +10,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [editingTask, setEditingTask] = useState(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     apiRequest("tasks")
@@ -70,11 +71,13 @@ function Dashboard() {
     }
   };
 
-  const filteredTasks = tasks.filter((t) => {
-    if (filter === "active") return !t.completed;
-    if (filter === "completed") return t.completed;
-    return true;
-  });
+  const filteredTasks = tasks
+    .filter((t) => {
+      if (filter === "active") return !t.completed;
+      if (filter === "completed") return t.completed;
+      return true;
+    })
+    .filter((t) => t.title.toLowerCase().includes(search.toLowerCase()));
 
   const completedCount = tasks.filter((t) => t.completed).length;
   const totalCount = tasks.length;
@@ -100,6 +103,13 @@ function Dashboard() {
       )}
 
       <TaskForm onAdd={handleAdd} />
+      <input
+        type="text"
+        className="form-control mb-3"
+        placeholder="Search tasks..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
 
       <div className="btn-group mb-4 w-100">
         <button
@@ -121,10 +131,15 @@ function Dashboard() {
           Completed ({completedCount})
         </button>
       </div>
+
       {loading ? (
-        <p className="text-muted">Loading...</p>
+        <div className="text-center py-5">
+          <div className="spinner-border text-primary" role="status" />
+        </div>
       ) : filteredTasks.length === 0 ? (
-        <p className="text-muted">No tasks yet. Add one above!</p>
+        <p className="text-muted text-center">
+          {search ? `No tasks found for "${search}"` : "No tasks here!"}
+        </p>
       ) : (
         filteredTasks.map((task) => (
           <TaskCard
@@ -136,6 +151,7 @@ function Dashboard() {
           />
         ))
       )}
+
       {editingTask && (
         <EditTaskModal
           task={editingTask}
