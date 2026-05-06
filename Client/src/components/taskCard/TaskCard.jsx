@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import "./taskCard.css";
 
 function TaskCard({ task, onDelete, onToggle, onEdit }) {
   const navigate = useNavigate();
+
   const priorityBadge = {
     low: "success",
     medium: "warning",
@@ -18,6 +20,13 @@ function TaskCard({ task, onDelete, onToggle, onEdit }) {
     <div
       className={`card mb-2 ${task.completed ? "border-success" : isOverdue ? "border-danger" : ""}`}
     >
+      {task.image?.url && (
+        <img
+          src={task.image.url}
+          alt={task.title}
+          className="card-img-top image-preview"
+        />
+      )}
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-center">
           <div>

@@ -19,11 +19,11 @@ function Dashboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleAdd = async (title, priority, dueDate) => {
+  const handleAdd = async (formData) => {
     try {
       const newTask = await apiRequest("tasks", {
         method: "POST",
-        body: JSON.stringify({ title, priority, dueDate }),
+        body: formData,
       });
       setTasks((prev) => [...prev, newTask]);
     } catch {
@@ -58,11 +58,11 @@ function Dashboard() {
     setEditingTask(tasks);
   };
 
-  const handleEditSave = async (updatedTask) => {
+  const handleEditSave = async ({ _id, formData }) => {
     try {
-      const saved = await apiRequest(`tasks/${updatedTask._id}`, {
+      const saved = await apiRequest(`tasks/${_id}`, {
         method: "PATCH",
-        body: JSON.stringify(updatedTask),
+        body: formData,
       });
       setTasks((prev) => prev.map((t) => (t._id === saved._id ? saved : t)));
       setEditingTask(null);

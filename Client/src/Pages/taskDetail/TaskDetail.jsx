@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
+import "./taskDetail.css";
 
 function TaskDetails() {
   const { id } = useParams();
@@ -55,6 +56,13 @@ function TaskDetails() {
       <div className="col-md-8">
         <div className="card shadow">
           <div className="card-body p-4">
+            {task.image && (
+              <img
+                src={task.image.url}
+                alt={task.title}
+                className="img-fluid rounded mb-4 img-detail"
+              />
+            )}
             <div className="d-flex justify-content-between align-items-start mb-4">
               <h2
                 className={

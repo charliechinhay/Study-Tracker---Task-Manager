@@ -1,17 +1,35 @@
 import { useState } from "react";
+import "./taskForm.css";
 
 function TaskForm({ onAdd }) {
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("medium");
   const [dueDate, setDueDate] = useState("");
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImage(file);
+    setPreview(URL.createObjectURL(file));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim()) return;
-    onAdd(title.trim(), priority, dueDate || null);
+    const formData = new FormData();
+    formData.append("title", title.trim());
+    formData.append("priority", priority);
+    if (dueDate) formData.append("dueDate", dueDate);
+    if (image) formData.append("image", image);
+
+    onAdd(formData);
     setTitle("");
     setPriority("medium");
     setDueDate("");
+    setImage(null);
+    setPreview(null);
   };
 
   return (
@@ -44,6 +62,21 @@ function TaskForm({ onAdd }) {
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
         />
+      </div>
+      <div>
+        <input
+          type="file"
+          className="form-control"
+          onChange={handleImageChange}
+          accept="image/*"
+        />
+        {preview && (
+          <img
+            src={preview}
+            alt="Preview"
+            className="mt-2 rounded image-preview"
+          />
+        )}
       </div>
     </form>
   );

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./editTaskModal.css";
 
 function EditTaskModal({ task, onSave, onClose }) {
   const [title, setTitle] = useState(task.title);
@@ -7,23 +8,34 @@ function EditTaskModal({ task, onSave, onClose }) {
     task.dueDate ? new Date(task.dueDate).toISOString().split("T")[0] : "",
   );
 
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(task.image?.url || null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImage(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim()) return;
+
+    const formData = new FormData();
+    formData.append("title", title.trim());
+    formData.append("priority", priority);
+    if (dueDate) formData.append("dueDate", dueDate);
+    if (image) formData.append("image", image);
+
     onSave({
-      ...task,
-      title: title.trim(),
-      priority,
-      dueDate: dueDate || null,
+      _id: task._id,
+      formData,
     });
   };
 
   return (
-    <div
-      className="modal d-block"
-      style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-      onClick={onClose}
-    >
+    <div className="modal d-block" onClick={onClose}>
       <div
         className="modal-dialog modal-dialog-centered"
         onClick={(e) => e.stopPropagation()}
@@ -65,6 +77,22 @@ function EditTaskModal({ task, onSave, onClose }) {
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
                 />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Image</label>
+                <input
+                  type="file"
+                  className="form-control"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+                {preview && (
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="img-preview mt-2"
+                  />
+                )}
               </div>
             </div>
             <div className="modal-footer">
