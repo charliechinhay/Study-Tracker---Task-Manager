@@ -2,6 +2,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { sendWelcomeEmail } from "../config/resend.js";
 
 const router = express.Router();
 
@@ -19,11 +20,23 @@ router.post("/register", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ email, password: hashedPassword });
+    const user = await User.create({
+      email,
+      password: hashedPassword,
+      isVerified: true,
+    });
 
-    res.status(201).json({ message: "User created successfully" });
+    // get welcome email
+    sendWelcomeEmail(email).catch((err) =>
+      console.error("Failed to send welcome email:", err),
+    );
+
+    res.status(201).json({
+      message: "Account created successfully! You can now login.",
+    });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Registration error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 });
 

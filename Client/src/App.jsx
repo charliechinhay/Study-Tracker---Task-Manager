@@ -6,6 +6,7 @@ import Dashboard from "./Pages/dashboard/Dashboard.jsx";
 import Layout from "./components/Layout/Layout.jsx";
 import Welcome from "./Pages/welcome/Welcome.jsx";
 import TaskDetails from "./Pages/taskDetail/TaskDetail.jsx";
+
 function App() {
   return (
     <ThemeProvider>

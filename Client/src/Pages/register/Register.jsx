@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { apiRequest } from "../../services/api";
-import { Link } from "react-router-dom";
 import "./register.css";
 
 function Register() {
@@ -9,6 +8,8 @@ function Register() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -20,7 +21,7 @@ function Register() {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
-      navigate("/login");
+      setSuccess(true);
     } catch (error) {
       console.error("Registration failed:", error);
       setError(
@@ -31,6 +32,22 @@ function Register() {
       setLoading(false);
     }
   };
+
+  if (success) {
+    return (
+      <div className="min-vh-100 d-flex align-items-center justify-content-center">
+        <div className="container-card card p-4 shadow text-center">
+          <h2 className="mb-4">Registration Successful!</h2>
+          <p className="mb-4">
+            Your account has been created successfully. You can now login.
+          </p>
+          <button className="btn btn-primary" onClick={() => navigate("/")}>
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
