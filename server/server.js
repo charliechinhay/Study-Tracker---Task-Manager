@@ -1,16 +1,28 @@
 import "dotenv/config";
-import connectDB from "./db.js";
-import express from "express";
 import cors from "cors";
+import express from "express";
+import connectDB from "./db.js";
+import session from "express-session";
 import authRoutes from "./routes/auth.js";
 import taskRoutes from "./routes/tasks.js";
+import passport from "./config/passport.js";
 
 connectDB();
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(express.json());
+app.use(
+  session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  }),
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);

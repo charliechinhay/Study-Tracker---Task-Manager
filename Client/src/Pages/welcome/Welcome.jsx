@@ -1,4 +1,19 @@
+import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
 function Welcome() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    // Handle Google OAuth callback with token
+    const token = searchParams.get("token");
+    if (token) {
+      localStorage.setItem("token", token);
+      navigate("/dashboard");
+    }
+  }, [navigate, searchParams]);
+
   return (
     <div className="welcome-container">
       <h1>Welcome to Study Tracker</h1>

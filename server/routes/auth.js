@@ -1,6 +1,7 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import passport from "../config/passport.js";
 import User from "../models/User.js";
 import { sendWelcomeEmail } from "../config/resend.js";
 
@@ -54,6 +55,13 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    // Check if user registered with Google
+    if (!user.password && user.googleId) {
+      return res.status(400).json({
+        message: "This account uses Google login. Please sign in with Google.",
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: " Invalid credentials" });
@@ -65,8 +73,27 @@ router.post("/login", async (req, res) => {
 
     res.json({ token });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 });
+
+// get /api/auth/google
+router.get("/google", passport.authenticate("google", { scope: ["email"] }));
+
+// get /api/auth/google/callback
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: `${process.env.CLIENT_URL}/?error=google_failed`,
+  }),
+  (req, res) => {
+    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    res.redirect(`${process.env.CLIENT_URL}/?token=${token}`);
+  },
+);
 
 export default router;
