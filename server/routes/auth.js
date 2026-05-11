@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import passport from "../config/passport.js";
 import User from "../models/User.js";
 import { sendWelcomeEmail } from "../config/resend.js";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -95,5 +96,16 @@ router.get(
     res.redirect(`${process.env.CLIENT_URL}/?token=${token}`);
   },
 );
+
+// GET /api/auth/me - get current user info
+router.get("/me", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("email");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ email: user.email });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 export default router;

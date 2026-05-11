@@ -11,20 +11,23 @@ function NavBar() {
   };
 
   return (
-    <nav className={`navbar navbar-expand-lg navbar-${theme} bg-${theme === "light" ? "light" : "dark"} border-bottom`}>
+    <nav className="navbar navbar-expand-lg border-bottom bg-body-tertiary">
       <div className="container">
-        <Link className="navbar-brand fw-bold" to="/dashboard">
-          Study Tracker
+        <Link
+          className="navbar-brand d-flex align-items-center gap-2 fw-bold fs-5"
+          to="/dashboard"
+        >
+          <span>📚</span> Study Tracker
         </Link>
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 align-items-center">
           <button
-            className="btn btn-outline-secondary btn-sm"
+            className="btn btn-sm btn-outline-secondary rounded-pill px-3"
             onClick={toggleTheme}
           >
-            {theme === "light" ? "Dark" : "Light"} Mode
+            {theme === "light" ? "🌙 Dark" : "☀️ Light"}
           </button>
           <button
-            className="btn btn-outline-danger btn-sm"
+            className="btn btn-sm btn-danger rounded-pill px-3"
             onClick={handleLogout}
           >
             Logout

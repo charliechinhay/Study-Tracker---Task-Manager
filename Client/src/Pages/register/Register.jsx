@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { apiRequest, BASE_URL } from "../../services/api";
-import "./register.css";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -39,13 +38,17 @@ function Register() {
 
   if (success) {
     return (
-      <div className="min-vh-100 d-flex align-items-center justify-content-center">
-        <div className="container-card card p-4 shadow text-center">
-          <h2 className="mb-4">Registration Successful!</h2>
-          <p className="mb-4">
-            Your account has been created successfully. You can now login.
+      <div className="auth-wrapper">
+        <div className="auth-card bg-body rounded-4 shadow-lg p-4 p-md-5 text-center">
+          <div style={{ fontSize: "3rem" }}>✅</div>
+          <h2 className="fw-bold mt-3 mb-2">Account created!</h2>
+          <p className="text-muted mb-4">
+            Your account has been created successfully. You can now sign in.
           </p>
-          <button className="btn btn-primary" onClick={() => navigate("/")}>
+          <button
+            className="btn btn-primary btn-lg px-5 fw-semibold"
+            onClick={() => navigate("/login")}
+          >
             Go to Login
           </button>
         </div>
@@ -54,28 +57,36 @@ function Register() {
   }
 
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center">
-      <div className="container-card card p-4 shadow">
-        <h2 className="text-center mb-4">Register</h2>
-        {error && <div className="alert alert-danger">{error}</div>}
+    <div className="auth-wrapper">
+      <div className="auth-card bg-body rounded-4 shadow-lg p-4 p-md-5">
+        <div className="text-center mb-4">
+          <div style={{ fontSize: "2.5rem" }}>📚</div>
+          <h2 className="fw-bold mt-2 mb-1">Create account</h2>
+          <p className="text-muted small mb-0">
+            Start tracking your study goals
+          </p>
+        </div>
+
+        {error && <div className="alert alert-danger py-2 small">{error}</div>}
+
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label">Email</label>
+            <label className="form-label fw-medium">Email</label>
             <input
               type="email"
-              className="form-control"
-              placeholder="email@example.com"
+              className="form-control form-control-lg"
+              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
-          <div className="mb-3">
-            <label className="form-label">Password</label>
+          <div className="mb-4">
+            <label className="form-label fw-medium">Password</label>
             <input
               type="password"
-              className="form-control"
-              placeholder="Password"
+              className="form-control form-control-lg"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -83,21 +94,28 @@ function Register() {
           </div>
           <button
             type="submit"
-            className="btn btn-primary w-100"
+            className="btn btn-primary btn-lg w-100 fw-semibold"
             disabled={loading}
           >
-            {loading ? "Loading..." : "Register"}
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" />
+                Creating account...
+              </>
+            ) : (
+              "Create account"
+            )}
           </button>
         </form>
 
-        <div className="d-flex align-items-center my-3">
+        <div className="d-flex align-items-center my-4">
           <hr className="flex-grow-1" />
-          <span className="px-2 text-muted">or</span>
+          <span className="px-3 text-muted small">or continue with</span>
           <hr className="flex-grow-1" />
         </div>
 
         <button
-          className="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2"
+          className="btn btn-outline-secondary btn-lg w-100 d-flex align-items-center justify-content-center gap-2"
           onClick={handleGoogleLogin}
         >
           <img
@@ -106,11 +124,17 @@ function Register() {
             width="18"
             height="18"
           />
-          Continue with Google
+          Google
         </button>
 
-        <p className="text-center mt-3 mb-0">
-          Already have an account? <Link to="/login">Login</Link>
+        <p className="text-center mt-4 mb-0 small text-muted">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="fw-semibold text-primary text-decoration-none"
+          >
+            Sign in
+          </Link>
         </p>
       </div>
     </div>

@@ -7,7 +7,6 @@ function EditTaskModal({ task, onSave, onClose }) {
   const [dueDate, setDueDate] = useState(
     task.dueDate ? new Date(task.dueDate).toISOString().split("T")[0] : "",
   );
-
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(task.image?.url || null);
 
@@ -21,17 +20,12 @@ function EditTaskModal({ task, onSave, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim()) return;
-
     const formData = new FormData();
     formData.append("title", title.trim());
     formData.append("priority", priority);
     if (dueDate) formData.append("dueDate", dueDate);
     if (image) formData.append("image", image);
-
-    onSave({
-      _id: task._id,
-      formData,
-    });
+    onSave({ _id: task._id, formData });
   };
 
   return (
@@ -40,15 +34,15 @@ function EditTaskModal({ task, onSave, onClose }) {
         className="modal-dialog modal-dialog-centered"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Edit Task</h5>
+        <div className="modal-content rounded-4 shadow">
+          <div className="modal-header border-0 pb-0">
+            <h5 className="modal-title fw-bold">Edit Task</h5>
             <button className="btn-close" onClick={onClose} />
           </div>
           <form onSubmit={handleSubmit}>
-            <div className="modal-body">
+            <div className="modal-body pt-3">
               <div className="mb-3">
-                <label className="form-label">Title</label>
+                <label className="form-label fw-medium">Title</label>
                 <input
                   type="text"
                   className="form-control"
@@ -58,7 +52,7 @@ function EditTaskModal({ task, onSave, onClose }) {
                 />
               </div>
               <div className="mb-3">
-                <label className="form-label">Priority</label>
+                <label className="form-label fw-medium">Priority</label>
                 <select
                   className="form-select"
                   value={priority}
@@ -70,7 +64,7 @@ function EditTaskModal({ task, onSave, onClose }) {
                 </select>
               </div>
               <div className="mb-3">
-                <label className="form-label">Due Date</label>
+                <label className="form-label fw-medium">Due Date</label>
                 <input
                   type="date"
                   className="form-control"
@@ -78,8 +72,8 @@ function EditTaskModal({ task, onSave, onClose }) {
                   onChange={(e) => setDueDate(e.target.value)}
                 />
               </div>
-              <div className="mb-3">
-                <label className="form-label">Image</label>
+              <div className="mb-1">
+                <label className="form-label fw-medium">Image</label>
                 <input
                   type="file"
                   className="form-control"
@@ -90,21 +84,21 @@ function EditTaskModal({ task, onSave, onClose }) {
                   <img
                     src={preview}
                     alt="Preview"
-                    className="img-preview mt-2"
+                    className="img-preview mt-2 rounded"
                   />
                 )}
               </div>
             </div>
-            <div className="modal-footer">
+            <div className="modal-footer border-0">
               <button
                 type="button"
-                className="btn btn-secondary"
+                className="btn btn-outline-secondary"
                 onClick={onClose}
               >
                 Cancel
               </button>
-              <button type="submit" className="btn btn-primary">
-                Save
+              <button type="submit" className="btn btn-primary fw-semibold">
+                <i className="bi bi-check-lg me-1" /> Save changes
               </button>
             </div>
           </form>

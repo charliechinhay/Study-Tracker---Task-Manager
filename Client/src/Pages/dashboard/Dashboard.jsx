@@ -11,12 +11,17 @@ function Dashboard() {
   const [filter, setFilter] = useState("all");
   const [editingTask, setEditingTask] = useState(null);
   const [search, setSearch] = useState("");
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     apiRequest("tasks")
       .then(setTasks)
       .catch(() => setError("Failed to load tasks."))
       .finally(() => setLoading(false));
+
+    apiRequest("auth/me")
+      .then((data) => setUserEmail(data.email))
+      .catch(() => {});
   }, []);
 
   const handleAdd = async (formData) => {
@@ -54,8 +59,8 @@ function Dashboard() {
     }
   };
 
-  const handleEdit = async (tasks) => {
-    setEditingTask(tasks);
+  const handleEdit = (task) => {
+    setEditingTask(task);
   };
 
   const handleEditSave = async ({ _id, formData }) => {
@@ -81,18 +86,40 @@ function Dashboard() {
 
   const completedCount = tasks.filter((t) => t.completed).length;
   const totalCount = tasks.length;
+  const progress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="mb-0">My Tasks</h2>
-        <span className="text-muted">
-          {completedCount} / {totalCount} completed
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <div>
+          <h2 className="fw-bold mb-0">My Tasks</h2>
+          {userEmail && (
+            <small className="text-muted">
+              <i className="bi bi-person-circle me-1" />
+              {userEmail}
+            </small>
+          )}
+        </div>
+        <span className="text-muted small fw-medium">
+          {completedCount}/{totalCount} completed
         </span>
       </div>
 
+      {totalCount > 0 && (
+        <div className="progress progress-thin mb-4">
+          <div
+            className="progress-bar bg-success"
+            role="progressbar"
+            style={{ width: `${progress}%` }}
+            aria-valuenow={progress}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          />
+        </div>
+      )}
+
       {error && (
-        <div className="alert alert-danger alert-dismissible">
+        <div className="alert alert-danger alert-dismissible py-2 small">
           {error}
           <button
             type="button"
@@ -103,13 +130,19 @@ function Dashboard() {
       )}
 
       <TaskForm onAdd={handleAdd} />
-      <input
-        type="text"
-        className="form-control mb-3"
-        placeholder="Search tasks..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+
+      <div className="input-group mb-3">
+        <span className="input-group-text bg-transparent">
+          <i className="bi bi-search text-muted" />
+        </span>
+        <input
+          type="text"
+          className="form-control border-start-0"
+          placeholder="Search tasks..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
 
       <div className="btn-group mb-4 w-100">
         <button
@@ -128,18 +161,28 @@ function Dashboard() {
           className={`btn btn-outline-secondary ${filter === "completed" ? "active" : ""}`}
           onClick={() => setFilter("completed")}
         >
-          Completed ({completedCount})
+          Done ({completedCount})
         </button>
       </div>
 
       {loading ? (
         <div className="text-center py-5">
           <div className="spinner-border text-primary" role="status" />
+          <p className="text-muted mt-3 small">Loading tasks...</p>
         </div>
       ) : filteredTasks.length === 0 ? (
-        <p className="text-muted text-center">
-          {search ? `No tasks found for "${search}"` : "No tasks here!"}
-        </p>
+        <div className="text-center py-5">
+          <div style={{ fontSize: "2.5rem" }}>
+            {search ? "🔍" : filter === "completed" ? "🎉" : "📋"}
+          </div>
+          <p className="text-muted mt-3">
+            {search
+              ? `No tasks found for "${search}"`
+              : filter === "completed"
+              ? "No completed tasks yet"
+              : "No tasks here — add one above!"}
+          </p>
+        </div>
       ) : (
         filteredTasks.map((task) => (
           <TaskCard
@@ -162,4 +205,5 @@ function Dashboard() {
     </div>
   );
 }
+
 export default Dashboard;

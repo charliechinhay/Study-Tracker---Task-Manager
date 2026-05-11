@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { apiRequest, BASE_URL } from "../../services/api";
-import "./login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -18,7 +17,6 @@ function Login() {
       localStorage.setItem("token", token);
       navigate("/dashboard");
     }
-
     const errorParam = searchParams.get("error");
     if (errorParam === "google_failed") {
       setError("Google login failed. Please try again.");
@@ -29,18 +27,15 @@ function Login() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       const data = await apiRequest("/auth/login", {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
-
       localStorage.setItem("token", data.token);
       navigate("/dashboard");
     } catch (error) {
       console.error("Login failed:", error);
-
       setError(
         "Login failed. Please check your credentials and try again. " +
           error.message,
@@ -55,28 +50,34 @@ function Login() {
   };
 
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center">
-      <div className="container-card card p-4 shadow">
-        <h2 className="text-center mb-4">Login</h2>
-        {error && <div className="alert alert-danger">{error}</div>}
+    <div className="auth-wrapper">
+      <div className="auth-card bg-body rounded-4 shadow-lg p-4 p-md-5">
+        <div className="text-center mb-4">
+          <div style={{ fontSize: "2.5rem" }}>📚</div>
+          <h2 className="fw-bold mt-2 mb-1">Welcome back</h2>
+          <p className="text-muted small mb-0">Sign in to your account</p>
+        </div>
+
+        {error && <div className="alert alert-danger py-2 small">{error}</div>}
+
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label">Email</label>
+            <label className="form-label fw-medium">Email</label>
             <input
               type="email"
-              className="form-control"
-              placeholder="email@example.com"
+              className="form-control form-control-lg"
+              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
-          <div className="mb-3">
-            <label className="form-label">Password</label>
+          <div className="mb-4">
+            <label className="form-label fw-medium">Password</label>
             <input
               type="password"
-              className="form-control"
-              placeholder="Password"
+              className="form-control form-control-lg"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -84,20 +85,28 @@ function Login() {
           </div>
           <button
             type="submit"
-            className="btn btn-primary w-100"
+            className="btn btn-primary btn-lg w-100 fw-semibold"
             disabled={loading}
           >
-            {loading ? "Loading..." : "Login"}
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" />
+                Signing in...
+              </>
+            ) : (
+              "Sign in"
+            )}
           </button>
         </form>
-        <div className="d-flex align-items-center my-3">
+
+        <div className="d-flex align-items-center my-4">
           <hr className="flex-grow-1" />
-          <span className="px-2 text-muted">or</span>
+          <span className="px-3 text-muted small">or continue with</span>
           <hr className="flex-grow-1" />
         </div>
 
         <button
-          className="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2"
+          className="btn btn-outline-secondary btn-lg w-100 d-flex align-items-center justify-content-center gap-2"
           onClick={handleGoogleLogin}
         >
           <img
@@ -106,11 +115,17 @@ function Login() {
             width="18"
             height="18"
           />
-          Continue with Google
+          Google
         </button>
 
-        <p className="text-center mt-3 mb-0">
-          Don't have an account? <Link to="/register">Register</Link>
+        <p className="text-center mt-4 mb-0 small text-muted">
+          Don&apos;t have an account?{" "}
+          <Link
+            to="/register"
+            className="fw-semibold text-primary text-decoration-none"
+          >
+            Create one
+          </Link>
         </p>
       </div>
     </div>

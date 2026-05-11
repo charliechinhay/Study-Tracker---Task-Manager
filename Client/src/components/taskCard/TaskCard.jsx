@@ -13,12 +13,17 @@ function TaskCard({ task, onDelete, onToggle, onEdit }) {
   const hasDueDate = !!task.dueDate;
   const isNotCompleted = !task.completed;
   const isPastDue = new Date(task.dueDate) < new Date();
-
   const isOverdue = hasDueDate && isNotCompleted && isPastDue;
 
   return (
     <div
-      className={`card mb-2 ${task.completed ? "border-success" : isOverdue ? "border-danger" : ""}`}
+      className={`card mb-2 task-card ${
+        task.completed
+          ? "border-success border-opacity-50"
+          : isOverdue
+          ? "border-danger border-opacity-50"
+          : ""
+      }`}
     >
       {task.image?.url && (
         <img
@@ -27,17 +32,17 @@ function TaskCard({ task, onDelete, onToggle, onEdit }) {
           className="card-img-top image-preview"
         />
       )}
-      <div className="card-body">
-        <div className="d-flex justify-content-between align-items-center">
-          <div>
-            <span
-              className={
+      <div className="card-body py-3">
+        <div className="d-flex justify-content-between align-items-center gap-2">
+          <div className="flex-grow-1" style={{ minWidth: 0 }}>
+            <p
+              className={`mb-1 fw-medium ${
                 task.completed ? "text-decoration-line-through text-muted" : ""
-              }
+              }`}
             >
               {task.title}
-            </span>
-            <div className="d-flex gap-2 mt-1">
+            </p>
+            <div className="d-flex gap-2 flex-wrap">
               <span className={`badge bg-${priorityBadge[task.priority]}`}>
                 {task.priority}
               </span>
@@ -45,35 +50,55 @@ function TaskCard({ task, onDelete, onToggle, onEdit }) {
                 <span
                   className={`badge ${isOverdue ? "bg-danger" : "bg-secondary"}`}
                 >
-                  📅 {new Date(task.dueDate).toLocaleDateString()}
+                  <i className="bi bi-calendar3 me-1" />
+                  {new Date(task.dueDate).toLocaleDateString()}
+                  {isOverdue && " · Overdue"}
+                </span>
+              )}
+              {task.completed && (
+                <span className="badge bg-success bg-opacity-75">
+                  <i className="bi bi-check-circle me-1" />
+                  Done
                 </span>
               )}
             </div>
           </div>
-          <div className="d-flex gap-2">
+          <div className="d-flex gap-1 flex-shrink-0">
             <button
-              className="btn btn-sm btn-outline-info"
+              className="btn btn-sm btn-outline-secondary"
+              title="View details"
               onClick={() => navigate(`/tasks/${task._id}`)}
             >
-              View
+              <i className="bi bi-eye" />
             </button>
             <button
-              className={`btn btn-sm ${task.completed ? "btn-outline-secondary" : "btn-outline-success"}`}
+              className={`btn btn-sm ${
+                task.completed
+                  ? "btn-outline-secondary"
+                  : "btn-outline-success"
+              }`}
+              title={task.completed ? "Mark as active" : "Mark as done"}
               onClick={() => onToggle(task)}
             >
-              {task.completed ? "Undo" : "Done"}
+              <i
+                className={`bi bi-${
+                  task.completed ? "arrow-counterclockwise" : "check-lg"
+                }`}
+              />
             </button>
             <button
               className="btn btn-sm btn-outline-primary"
+              title="Edit task"
               onClick={() => onEdit(task)}
             >
-              ✏️ Edit
+              <i className="bi bi-pencil" />
             </button>
             <button
               className="btn btn-sm btn-outline-danger"
+              title="Delete task"
               onClick={() => onDelete(task._id)}
             >
-              🗑 Delete
+              <i className="bi bi-trash" />
             </button>
           </div>
         </div>

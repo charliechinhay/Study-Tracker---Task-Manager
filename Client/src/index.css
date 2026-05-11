@@ -1,0 +1,62 @@
+body {
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+:root {
+  --bs-primary: #6366f1;
+  --bs-primary-rgb: 99, 102, 241;
+  --bs-link-color: #6366f1;
+  --bs-link-color-rgb: 99, 102, 241;
+  --bs-link-hover-color: #4f46e5;
+}
+
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #6366f1;
+  --bs-btn-border-color: #6366f1;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #4f46e5;
+  --bs-btn-hover-border-color: #4338ca;
+  --bs-btn-focus-shadow-rgb: 99, 102, 241;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #4338ca;
+  --bs-btn-active-border-color: #3730a3;
+  --bs-btn-disabled-bg: #6366f1;
+  --bs-btn-disabled-border-color: #6366f1;
+}
+
+.btn-outline-primary {
+  --bs-btn-color: #6366f1;
+  --bs-btn-border-color: #6366f1;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #6366f1;
+  --bs-btn-hover-border-color: #6366f1;
+  --bs-btn-focus-shadow-rgb: 99, 102, 241;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #6366f1;
+  --bs-btn-active-border-color: #6366f1;
+}
+
+.auth-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+}
+
+.progress-thin {
+  height: 6px;
+  border-radius: 6px;
+  overflow: hidden;
+}

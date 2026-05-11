@@ -27,6 +27,7 @@ function TaskDetails() {
     return (
       <div className="text-center py-5">
         <div className="spinner-border text-primary" role="status" />
+        <p className="text-muted mt-3 small">Loading task...</p>
       </div>
     );
   }
@@ -34,9 +35,10 @@ function TaskDetails() {
   if (error || !task) {
     return (
       <div className="text-center py-5">
-        <p className="text-danger">{error}</p>
+        <div style={{ fontSize: "3rem" }}>😕</div>
+        <p className="text-danger mt-3">{error}</p>
         <button
-          className="btn btn-primary"
+          className="btn btn-primary px-4"
           onClick={() => navigate("/dashboard")}
         >
           Back to Dashboard
@@ -48,71 +50,84 @@ function TaskDetails() {
   const hasDueDate = !!task.dueDate;
   const isNotCompleted = !task.completed;
   const isPastDue = new Date(task.dueDate) < new Date();
-
   const isOverdue = hasDueDate && isNotCompleted && isPastDue;
 
   return (
     <div className="row justify-content-center">
-      <div className="col-md-8">
-        <div className="card shadow">
+      <div className="col-md-8 col-lg-7">
+        <button
+          className="btn btn-link text-muted ps-0 mb-3 d-flex align-items-center gap-1 text-decoration-none"
+          onClick={() => navigate("/dashboard")}
+        >
+          <i className="bi bi-arrow-left" /> Back
+        </button>
+
+        <div className="card shadow-sm">
+          {task.image?.url && (
+            <img
+              src={task.image.url}
+              alt={task.title}
+              className="card-img-top img-detail"
+            />
+          )}
           <div className="card-body p-4">
-            {task.image && (
-              <img
-                src={task.image.url}
-                alt={task.title}
-                className="img-fluid rounded mb-4 img-detail"
-              />
-            )}
-            <div className="d-flex justify-content-between align-items-start mb-4">
+            <div className="d-flex justify-content-between align-items-start mb-3">
               <h2
-                className={
+                className={`fw-bold mb-0 ${
                   task.completed
                     ? "text-decoration-line-through text-muted"
                     : ""
-                }
+                }`}
               >
                 {task.title}
               </h2>
-              <span className={`badge bg-${priorityBadge[task.priority]} fs-6`}>
+              <span
+                className={`badge bg-${priorityBadge[task.priority]} ms-2`}
+              >
                 {task.priority}
               </span>
             </div>
 
-            <div className="mb-3">
+            <div className="d-flex gap-2 mb-4 flex-wrap">
               <span
-                className={`badge fs-6 ${task.completed ? "bg-success" : "bg-secondary"}`}
+                className={`badge fs-6 ${
+                  task.completed ? "bg-success" : "bg-secondary"
+                }`}
               >
-                {task.completed ? "✅ Completed" : "⏳ Active"}
+                {task.completed ? (
+                  <>
+                    <i className="bi bi-check-circle me-1" /> Completed
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-clock me-1" /> Active
+                  </>
+                )}
               </span>
-            </div>
-
-            {task.dueDate && (
-              <div className="mb-3">
-                <strong>Due Date:</strong>{" "}
-                <span className={isOverdue ? "text-danger" : ""}>
-                  {new Date(task.dueDate).toLocaleDateString()}
-                  {isOverdue && " ⚠️ Overdue"}
+              {isOverdue && (
+                <span className="badge bg-danger fs-6">
+                  <i className="bi bi-exclamation-triangle me-1" /> Overdue
                 </span>
+              )}
+            </div>
+
+            <div className="list-group list-group-flush">
+              {task.dueDate && (
+                <div className="list-group-item px-0 d-flex justify-content-between">
+                  <span className="text-muted fw-medium">Due date</span>
+                  <span className={isOverdue ? "text-danger fw-medium" : ""}>
+                    {new Date(task.dueDate).toLocaleDateString()}
+                  </span>
+                </div>
+              )}
+              <div className="list-group-item px-0 d-flex justify-content-between">
+                <span className="text-muted fw-medium">Created</span>
+                <span>{new Date(task.createdAt).toLocaleDateString()}</span>
               </div>
-            )}
-
-            <div className="mb-3">
-              <strong>Created:</strong>{" "}
-              {new Date(task.createdAt).toLocaleDateString()}
-            </div>
-
-            <div className="mb-3">
-              <strong>Last updated:</strong>{" "}
-              {new Date(task.updatedAt).toLocaleDateString()}
-            </div>
-
-            <div className="d-flex gap-2 mt-4">
-              <button
-                className="btn btn-secondary"
-                onClick={() => navigate("/dashboard")}
-              >
-                ← Back
-              </button>
+              <div className="list-group-item px-0 d-flex justify-content-between">
+                <span className="text-muted fw-medium">Last updated</span>
+                <span>{new Date(task.updatedAt).toLocaleDateString()}</span>
+              </div>
             </div>
           </div>
         </div>
