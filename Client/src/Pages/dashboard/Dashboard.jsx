@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { apiRequest } from "../../services/api";
 import TaskCard from "../../components/taskCard/TaskCard";
 import TaskForm from "../../components/taskForm/TaskForm";
 import EditTaskModal from "../../components/editTaskModal/EditTaskModal";
+import TaskCardSkeleton from "../../components/taskCardSkeleton/TaskCardSkeleton";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
@@ -31,8 +33,9 @@ function Dashboard() {
         body: formData,
       });
       setTasks((prev) => [...prev, newTask]);
+      toast.success("Task added!");
     } catch {
-      setError("Failed to add task.");
+      toast.error("Failed to add task.");
     }
   };
 
@@ -40,8 +43,9 @@ function Dashboard() {
     try {
       await apiRequest(`tasks/${id}`, { method: "DELETE" });
       setTasks((prev) => prev.filter((t) => t._id !== id));
+      toast.success("Task deleted!");
     } catch {
-      setError("Failed to delete task.");
+      toast.error("Failed to delete task.");
     }
   };
 
@@ -54,8 +58,9 @@ function Dashboard() {
       setTasks((prev) =>
         prev.map((t) => (t._id === updated._id ? updated : t)),
       );
+      toast.success("Task updated!");
     } catch {
-      setError("Failed to update task.");
+      toast.error("Failed to update task.");
     }
   };
 
@@ -71,8 +76,9 @@ function Dashboard() {
       });
       setTasks((prev) => prev.map((t) => (t._id === saved._id ? saved : t)));
       setEditingTask(null);
+      toast.success("Task updated!");
     } catch {
-      setError("Failed to update task.");
+      toast.error("Failed to update task.");
     }
   };
 
@@ -86,7 +92,8 @@ function Dashboard() {
 
   const completedCount = tasks.filter((t) => t.completed).length;
   const totalCount = tasks.length;
-  const progress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const progress =
+    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return (
     <div>
@@ -166,10 +173,11 @@ function Dashboard() {
       </div>
 
       {loading ? (
-        <div className="text-center py-5">
-          <div className="spinner-border text-primary" role="status" />
-          <p className="text-muted mt-3 small">Loading tasks...</p>
-        </div>
+        <>
+          <TaskCardSkeleton />
+          <TaskCardSkeleton />
+          <TaskCardSkeleton />
+        </>
       ) : filteredTasks.length === 0 ? (
         <div className="text-center py-5">
           <div style={{ fontSize: "2.5rem" }}>
@@ -179,8 +187,8 @@ function Dashboard() {
             {search
               ? `No tasks found for "${search}"`
               : filter === "completed"
-              ? "No completed tasks yet"
-              : "No tasks here — add one above!"}
+                ? "No completed tasks yet"
+                : "No tasks here — add one above!"}
           </p>
         </div>
       ) : (

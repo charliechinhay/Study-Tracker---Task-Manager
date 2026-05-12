@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
+import TaskDetailSkeleton from "../../components/taskDetailSkeleton/TaskDetailSkeleton";
 import "./taskDetail.css";
 
 function TaskDetails() {
@@ -24,12 +25,7 @@ function TaskDetails() {
   };
 
   if (loading) {
-    return (
-      <div className="text-center py-5">
-        <div className="spinner-border text-primary" role="status" />
-        <p className="text-muted mt-3 small">Loading task...</p>
-      </div>
-    );
+    return <TaskDetailSkeleton />;
   }
 
   if (error || !task) {
@@ -81,9 +77,7 @@ function TaskDetails() {
               >
                 {task.title}
               </h2>
-              <span
-                className={`badge bg-${priorityBadge[task.priority]} ms-2`}
-              >
+              <span className={`badge bg-${priorityBadge[task.priority]} ms-2`}>
                 {task.priority}
               </span>
             </div>

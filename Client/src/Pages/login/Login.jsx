@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { apiRequest, BASE_URL } from "../../services/api";
+import { toast } from "react-hot-toast";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -19,7 +20,7 @@ function Login() {
     }
     const errorParam = searchParams.get("error");
     if (errorParam === "google_failed") {
-      setError("Google login failed. Please try again.");
+      toast.error("Google login failed. Please try again.");
     }
   }, [navigate, searchParams]);
 
@@ -35,8 +36,7 @@ function Login() {
       localStorage.setItem("token", data.token);
       navigate("/dashboard");
     } catch (error) {
-      console.error("Login failed:", error);
-      setError(
+      toast.error(
         "Login failed. Please check your credentials and try again. " +
           error.message,
       );

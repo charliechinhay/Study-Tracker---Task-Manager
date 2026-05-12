@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate, Link } from "react-router-dom";
 import { apiRequest, BASE_URL } from "../../services/api";
 
@@ -21,9 +22,9 @@ function Register() {
         body: JSON.stringify({ email, password }),
       });
       setSuccess(true);
+      toast.success("Account created successfully!");
     } catch (error) {
-      console.error("Registration failed:", error);
-      setError(
+      toast.error(
         "Registration failed. Please check your details and try again. " +
           error.message,
       );
