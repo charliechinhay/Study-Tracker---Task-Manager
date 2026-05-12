@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
-import { apiRequest, BASE_URL } from "../../services/api";
-import { toast } from "react-hot-toast";
 import "./login.css";
+import { toast } from "react-hot-toast";
+import { useState, useEffect } from "react";
+import { apiRequest, BASE_URL } from "../../services/api";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");

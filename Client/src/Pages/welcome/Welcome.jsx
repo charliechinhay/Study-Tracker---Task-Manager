@@ -1,6 +1,6 @@
+import "./welcome.css";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import "./welcome.css";
 
 function Welcome() {
   const navigate = useNavigate();

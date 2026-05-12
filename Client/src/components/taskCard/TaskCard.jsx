@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
 import "./taskCard.css";
+import { useNavigate } from "react-router-dom";
 
 function TaskCard({ task, onDelete, onToggle, onEdit }) {
   const navigate = useNavigate();

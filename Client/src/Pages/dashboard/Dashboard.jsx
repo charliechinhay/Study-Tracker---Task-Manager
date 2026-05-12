@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import "./Dashboard.css";
 import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 import { apiRequest } from "../../services/api";
 import TaskCard from "../../components/taskCard/TaskCard";
 import TaskForm from "../../components/taskForm/TaskForm";
 import EditTaskModal from "../../components/editTaskModal/EditTaskModal";
 import TaskCardSkeleton from "../../components/taskCardSkeleton/TaskCardSkeleton";
-import "./Dashboard.css";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);

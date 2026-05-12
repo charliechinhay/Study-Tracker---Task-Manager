@@ -1,6 +1,6 @@
-import { Navigate, Outlet } from "react-router-dom";
 import NavBar from "../navBar/NavBar";
 import Footer from "../footer/Footer";
+import { Navigate, Outlet } from "react-router-dom";
 
 function Layout() {
   const token = localStorage.getItem("token");

@@ -1,5 +1,5 @@
-import { useState } from "react";
 import "./editTaskModal.css";
+import { useState } from "react";
 
 function EditTaskModal({ task, onSave, onClose }) {
   const [title, setTitle] = useState(task.title);

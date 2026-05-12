@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { apiRequest } from "../../services/api";
-import TaskDetailSkeleton from "../../components/taskDetailSkeleton/TaskDetailSkeleton";
 import "./taskDetail.css";
+import { useEffect, useState } from "react";
+import { apiRequest } from "../../services/api";
+import { useParams, useNavigate } from "react-router-dom";
+import TaskDetailSkeleton from "../../components/taskDetailSkeleton/TaskDetailSkeleton";
 
 function TaskDetails() {
   const { id } = useParams();

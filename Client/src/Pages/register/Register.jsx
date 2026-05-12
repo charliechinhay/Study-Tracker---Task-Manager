@@ -1,8 +1,8 @@
+import "./register.css";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, Link } from "react-router-dom";
 import { apiRequest, BASE_URL } from "../../services/api";
-import "./register.css";
 
 function Register() {
   const [email, setEmail] = useState("");

@@ -1,10 +1,10 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import passport from "../config/passport.js";
 import User from "../models/User.js";
-import { sendWelcomeEmail } from "../config/resend.js";
 import auth from "../middleware/auth.js";
+import passport from "../config/passport.js";
+import { sendWelcomeEmail } from "../config/resend.js";
 
 const router = express.Router();
 
