@@ -8,6 +8,7 @@ function TaskForm({ onAdd }) {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [expanded, setExpanded] = useState(false);
+  const [description, setDescription] = useState("");
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -22,11 +23,13 @@ function TaskForm({ onAdd }) {
     const formData = new FormData();
     formData.append("title", title.trim());
     formData.append("priority", priority);
+    formData.append("description", description.trim());
     if (dueDate) formData.append("dueDate", dueDate);
     if (image) formData.append("image", image);
 
     onAdd(formData);
     setTitle("");
+    setDescription("");
     setPriority("medium");
     setDueDate("");
     setImage(null);
@@ -52,6 +55,13 @@ function TaskForm({ onAdd }) {
               Add
             </button>
           </div>
+          <textarea
+            className="form-control mb-2"
+            placeholder="Description (optional)..."
+            rows="2"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
 
           {expanded && (
             <>

@@ -42,6 +42,13 @@ function TaskCard({ task, onDelete, onToggle, onEdit }) {
             >
               {task.title}
             </p>
+            {task.description && (
+              <p className="text-muted small mb-2 mt-1">
+                {task.description.length > 60
+                  ? `${task.description.substring(0, 60)}...`
+                  : task.description}
+              </p>
+            )}
             <div className="d-flex gap-2 flex-wrap">
               <span className={`badge bg-${priorityBadge[task.priority]}`}>
                 {task.priority}

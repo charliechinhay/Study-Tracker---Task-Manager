@@ -4,6 +4,7 @@ import { useState } from "react";
 function EditTaskModal({ task, onSave, onClose }) {
   const [title, setTitle] = useState(task.title);
   const [priority, setPriority] = useState(task.priority);
+  const [description, setDescription] = useState(task.description || "");
   const [dueDate, setDueDate] = useState(
     task.dueDate ? new Date(task.dueDate).toISOString().split("T")[0] : "",
   );
@@ -23,6 +24,7 @@ function EditTaskModal({ task, onSave, onClose }) {
     const formData = new FormData();
     formData.append("title", title.trim());
     formData.append("priority", priority);
+    formData.append("description", description.trim());
     if (dueDate) formData.append("dueDate", dueDate);
     if (image) formData.append("image", image);
     onSave({ _id: task._id, formData });
@@ -49,6 +51,16 @@ function EditTaskModal({ task, onSave, onClose }) {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   required
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Description</label>
+                <textarea
+                  className="form-control"
+                  rows="3"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Optional..."
                 />
               </div>
               <div className="mb-3">

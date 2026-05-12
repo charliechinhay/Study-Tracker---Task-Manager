@@ -9,6 +9,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -46,6 +47,21 @@ function Login() {
     }
   };
 
+  const handleDemoLogin = async () => {
+    setDemoLoading(true);
+    try {
+      const data = await apiRequest("/auth/demo", {
+        method: "POST",
+      });
+      localStorage.setItem("token", data.token);
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error("Demo login failed. Please try again. " + error.message);
+    } finally {
+      setDemoLoading(false);
+    }
+  };
+
   const handleGoogleLogin = () => {
     window.location.href = `${BASE_URL}/auth/google`;
   };
@@ -58,6 +74,13 @@ function Login() {
           <h2 className="fw-bold mt-2 mb-1">Welcome back</h2>
           <p className="text-muted small mb-0">Sign in to your account</p>
         </div>
+        <button
+          className="btn btn-success w-100 mb-3"
+          onClick={handleDemoLogin}
+          disabled={demoLoading}
+        >
+          {demoLoading ? "Loading..." : "🚀 Try Demo Account"}
+        </button>
 
         {error && <div className="alert alert-danger py-2 small">{error}</div>}
 

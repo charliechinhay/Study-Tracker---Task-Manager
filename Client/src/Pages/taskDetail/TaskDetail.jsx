@@ -84,6 +84,15 @@ function TaskDetails() {
               </span>
             </div>
 
+            {task.description && (
+              <div className="mb-4">
+                <h5>Description</h5>
+                <p className="text-muted" style={{ whiteSpace: "pre-wrap" }}>
+                  {task.description}
+                </p>
+              </div>
+            )}
+
             <div className="d-flex gap-2 mb-4 flex-wrap">
               <span
                 className={`badge fs-6 ${

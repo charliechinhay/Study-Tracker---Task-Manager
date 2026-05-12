@@ -108,4 +108,26 @@ router.get("/me", auth, async (req, res) => {
   }
 });
 
+//post /api/auth/demo
+router.post("/demo", async (req, res) => {
+  try {
+    let demoUser = await User.findOne({ email: "demo@studytracker.com" });
+    if (!demoUser) {
+      const hashedPassword = await bcrypt.hash("demo123", 10);
+      demoUser = await User.create({
+        email: "demo@studytracker.com",
+        password: hashedPassword,
+        isVerified: true,
+      });
+    }
+    const token = jwt.sign({ id: demoUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    res.json({ token });
+  } catch (err) {
+    console.error("Demo login error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
+
 export default router;

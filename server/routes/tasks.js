@@ -38,7 +38,7 @@ router.get("/:id", auth, async (req, res) => {
 //POST / api / tasks - create a new task
 router.post("/", auth, upload.single("image"), async (req, res) => {
   try {
-    const { title, priority, dueDate } = req.body;
+    const { title, description, priority, dueDate } = req.body;
 
     if (!title) {
       return res.status(400).json({ message: "Title is required" });
@@ -47,6 +47,7 @@ router.post("/", auth, upload.single("image"), async (req, res) => {
     const task = await Task.create({
       user: req.user.id,
       title,
+      description,
       priority,
       dueDate,
       image: req.file
@@ -72,9 +73,10 @@ router.patch("/:id", auth, upload.single("image"), async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    const { title, completed, priority, dueDate } = req.body;
+    const { title, description, completed, priority, dueDate } = req.body;
 
     if (title !== undefined) task.title = title;
+    if (description !== undefined) task.description = description;
     if (completed !== undefined) task.completed = completed;
     if (priority !== undefined) task.priority = priority;
     if (dueDate !== undefined) task.dueDate = dueDate;
