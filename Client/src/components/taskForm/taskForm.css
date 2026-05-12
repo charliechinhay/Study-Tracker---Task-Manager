@@ -8,3 +8,25 @@
   object-fit: cover;
   border-radius: 0.5rem;
 }
+
+@media (max-width: 768px) {
+  .task-form-controls {
+    flex-direction: column !important;
+  }
+
+  .task-form-controls .form-select,
+  .task-form-controls .form-control {
+    width: 100% !important;
+  }
+
+  .image-preview {
+    max-height: 150px;
+  }
+}
+
+@media (max-width: 576px) {
+  .task-form .btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}

@@ -1,0 +1,19 @@
+.dashboard-form-sticky {
+  position: sticky;
+  top: 20px;
+}
+
+.dashboard-empty-icon {
+  font-size: 2.5rem;
+}
+
+.dashboard-progress-bar {
+  width: var(--progress-width, 0%);
+}
+
+@media (max-width: 991px) {
+  .dashboard-form-sticky {
+    position: relative;
+    top: 0;
+  }
+}

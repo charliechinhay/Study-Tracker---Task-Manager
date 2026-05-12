@@ -1,0 +1,29 @@
+.skeleton-detail-title {
+  height: 40px;
+  width: 60%;
+}
+
+.skeleton-detail-badge {
+  height: 32px;
+  width: 80px;
+}
+
+.skeleton-detail-status {
+  height: 32px;
+  width: 120px;
+}
+
+.skeleton-detail-info-large {
+  height: 20px;
+  width: 200px;
+}
+
+.skeleton-detail-info-medium {
+  height: 20px;
+  width: 180px;
+}
+
+.skeleton-detail-info-xlarge {
+  height: 20px;
+  width: 220px;
+}

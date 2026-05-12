@@ -31,7 +31,7 @@ function TaskDetails() {
   if (error || !task) {
     return (
       <div className="text-center py-5">
-        <div style={{ fontSize: "3rem" }}>😕</div>
+        <div className="icon-error-face">😕</div>
         <p className="text-danger mt-3">{error}</p>
         <button
           className="btn btn-primary px-4"
@@ -50,7 +50,7 @@ function TaskDetails() {
 
   return (
     <div className="row justify-content-center">
-      <div className="col-md-8 col-lg-7">
+      <div className="col-12 col-md-10 col-lg-8">
         <button
           className="btn btn-link text-muted ps-0 mb-3 d-flex align-items-center gap-1 text-decoration-none"
           onClick={() => navigate("/dashboard")}
@@ -58,7 +58,7 @@ function TaskDetails() {
           <i className="bi bi-arrow-left" /> Back
         </button>
 
-        <div className="card shadow-sm">
+        <div className="card shadow-sm task-detail-card">
           {task.image?.url && (
             <img
               src={task.image.url}
@@ -66,10 +66,10 @@ function TaskDetails() {
               className="card-img-top img-detail"
             />
           )}
-          <div className="card-body p-4">
-            <div className="d-flex justify-content-between align-items-start mb-3">
+          <div className="card-body p-3 p-sm-4">
+            <div className="d-flex justify-content-between align-items-start mb-3 flex-column flex-sm-row gap-2">
               <h2
-                className={`fw-bold mb-0 ${
+                className={`fw-bold mb-0 task-detail-title ${
                   task.completed
                     ? "text-decoration-line-through text-muted"
                     : ""
@@ -77,7 +77,9 @@ function TaskDetails() {
               >
                 {task.title}
               </h2>
-              <span className={`badge bg-${priorityBadge[task.priority]} ms-2`}>
+              <span
+                className={`badge bg-${priorityBadge[task.priority]} ms-0 ms-sm-2 align-self-start`}
+              >
                 {task.priority}
               </span>
             </div>
@@ -107,18 +109,18 @@ function TaskDetails() {
 
             <div className="list-group list-group-flush">
               {task.dueDate && (
-                <div className="list-group-item px-0 d-flex justify-content-between">
+                <div className="list-group-item px-0 d-flex justify-content-between flex-column flex-sm-row gap-1">
                   <span className="text-muted fw-medium">Due date</span>
                   <span className={isOverdue ? "text-danger fw-medium" : ""}>
                     {new Date(task.dueDate).toLocaleDateString()}
                   </span>
                 </div>
               )}
-              <div className="list-group-item px-0 d-flex justify-content-between">
+              <div className="list-group-item px-0 d-flex justify-content-between flex-column flex-sm-row gap-1">
                 <span className="text-muted fw-medium">Created</span>
                 <span>{new Date(task.createdAt).toLocaleDateString()}</span>
               </div>
-              <div className="list-group-item px-0 d-flex justify-content-between">
+              <div className="list-group-item px-0 d-flex justify-content-between flex-column flex-sm-row gap-1">
                 <span className="text-muted fw-medium">Last updated</span>
                 <span>{new Date(task.updatedAt).toLocaleDateString()}</span>
               </div>

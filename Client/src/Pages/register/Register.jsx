@@ -2,6 +2,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, Link } from "react-router-dom";
 import { apiRequest, BASE_URL } from "../../services/api";
+import "./register.css";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -41,7 +42,7 @@ function Register() {
     return (
       <div className="auth-wrapper">
         <div className="auth-card bg-body rounded-4 shadow-lg p-4 p-md-5 text-center">
-          <div style={{ fontSize: "3rem" }}>✅</div>
+          <div className="icon-success-create">✅</div>
           <h2 className="fw-bold mt-3 mb-2">Account created!</h2>
           <p className="text-muted mb-4">
             Your account has been created successfully. You can now sign in.
@@ -61,7 +62,7 @@ function Register() {
     <div className="auth-wrapper">
       <div className="auth-card bg-body rounded-4 shadow-lg p-4 p-md-5">
         <div className="text-center mb-4">
-          <div style={{ fontSize: "2.5rem" }}>📚</div>
+          <div className="icon-book-25">📚</div>
           <h2 className="fw-bold mt-2 mb-1">Create account</h2>
           <p className="text-muted small mb-0">
             Start tracking your study goals

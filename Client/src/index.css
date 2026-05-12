@@ -60,3 +60,76 @@ body {
   border-radius: 6px;
   overflow: hidden;
 }
+
+@media (max-width: 768px) {
+  .auth-wrapper {
+    padding: 1rem;
+  }
+
+  .auth-card {
+    padding: 1.5rem !important;
+  }
+
+  h1,
+  .display-5 {
+    font-size: 1.75rem !important;
+  }
+
+  h2 {
+    font-size: 1.5rem !important;
+  }
+
+  .btn-lg {
+    padding: 0.625rem 1rem;
+    font-size: 1rem;
+  }
+
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .card {
+    border-radius: 0.75rem !important;
+  }
+
+  .card-body {
+    padding: 1rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .auth-wrapper {
+    padding: 0.5rem;
+  }
+
+  h1,
+  .display-5 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.25rem !important;
+  }
+
+  .btn {
+    font-size: 0.875rem;
+  }
+
+  .card-body {
+    padding: 0.75rem !important;
+  }
+
+  .form-control-lg,
+  .btn-lg {
+    font-size: 0.95rem;
+  }
+
+  .flex-mobile-column {
+    flex-direction: column !important;
+  }
+
+  .btn-mobile-full {
+    width: 100% !important;
+  }
+}

@@ -1,5 +1,7 @@
 .task-card {
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .task-card:hover {
@@ -11,4 +13,39 @@
   width: 100%;
   max-height: 180px;
   object-fit: cover;
+}
+
+.flex-grow-1 .w-100 {
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .task-card .card-body {
+    padding: 0.75rem !important;
+  }
+
+  .task-card .btn-sm {
+    padding: 0.25rem 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  .task-card .badge {
+    font-size: 0.7rem;
+  }
+
+  .image-preview {
+    max-height: 150px;
+  }
+}
+
+@media (max-width: 576px) {
+  .task-card-actions {
+    flex-wrap: wrap;
+    gap: 0.25rem !important;
+  }
+
+  .task-card .btn-sm {
+    padding: 0.2rem 0.35rem;
+    font-size: 0.7rem;
+  }
 }

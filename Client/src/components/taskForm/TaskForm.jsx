@@ -35,10 +35,10 @@ function TaskForm({ onAdd }) {
   };
 
   return (
-    <div className="card mb-4 border-dashed">
+    <div className="card mb-4 border-dashed task-form">
       <div className="card-body">
         <form onSubmit={handleSubmit}>
-          <div className="d-flex gap-2 mb-2">
+          <div className="d-flex gap-2 mb-2 flex-column flex-sm-row">
             <input
               type="text"
               className="form-control"
@@ -55,7 +55,7 @@ function TaskForm({ onAdd }) {
 
           {expanded && (
             <>
-              <div className="d-flex gap-2 mb-2">
+              <div className="d-flex gap-2 mb-2 flex-column flex-md-row task-form-controls">
                 <select
                   className="form-select"
                   value={priority}

@@ -1,0 +1,28 @@
+.skeleton-content-wrapper {
+  flex: 1;
+}
+
+.skeleton-title {
+  height: 20px;
+  width: 70%;
+}
+
+.skeleton-badge-small {
+  height: 24px;
+  width: 60px;
+}
+
+.skeleton-badge-medium {
+  height: 24px;
+  width: 100px;
+}
+
+.skeleton-button-small {
+  height: 31px;
+  width: 50px;
+}
+
+.skeleton-button-medium {
+  height: 31px;
+  width: 60px;
+}

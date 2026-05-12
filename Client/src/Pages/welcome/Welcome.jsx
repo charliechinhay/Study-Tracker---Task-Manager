@@ -16,19 +16,25 @@ function Welcome() {
 
   return (
     <div className="welcome-hero min-vh-100 d-flex align-items-center justify-content-center">
-      <div className="container py-5">
+      <div className="container py-5 px-3">
         <div className="row justify-content-center text-center">
-          <div className="col-lg-5 col-md-8">
-            <div className="mb-4" style={{ fontSize: "3rem" }}>📚</div>
+          <div className="col-12 col-sm-10 col-md-8 col-lg-6">
+            <div className="mb-4 icon-book">📚</div>
             <h1 className="display-5 fw-bold mb-3 text-white">Study Tracker</h1>
-            <p className="mb-5" style={{ color: "rgba(255,255,255,0.78)" }}>
+            <p className="mb-4 mb-sm-5 px-2 text-white-book">
               Stay organized, track your tasks, and achieve your study goals.
             </p>
-            <div className="d-flex gap-3 justify-content-center">
-              <Link to="/login" className="btn btn-light btn-lg px-5 fw-semibold">
+            <div className="d-flex gap-2 gap-sm-3 justify-content-center flex-column flex-sm-row px-2">
+              <Link
+                to="/login"
+                className="btn btn-light btn-lg px-4 px-sm-5 fw-semibold"
+              >
                 Sign in
               </Link>
-              <Link to="/register" className="btn btn-outline-light btn-lg px-5">
+              <Link
+                to="/register"
+                className="btn btn-outline-light btn-lg px-4 px-sm-5"
+              >
                 Create account
               </Link>
             </div>

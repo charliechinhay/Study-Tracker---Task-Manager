@@ -31,7 +31,7 @@ function EditTaskModal({ task, onSave, onClose }) {
   return (
     <div className="modal d-block" onClick={onClose}>
       <div
-        className="modal-dialog modal-dialog-centered"
+        className="modal-dialog modal-dialog-centered modal-dialog-scrollable mx-2 mx-sm-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-content rounded-4 shadow">
@@ -89,15 +89,18 @@ function EditTaskModal({ task, onSave, onClose }) {
                 )}
               </div>
             </div>
-            <div className="modal-footer border-0">
+            <div className="modal-footer border-0 flex-column flex-sm-row gap-2">
               <button
                 type="button"
-                className="btn btn-outline-secondary"
+                className="btn btn-outline-secondary w-100 w-sm-auto order-2 order-sm-1"
                 onClick={onClose}
               >
                 Cancel
               </button>
-              <button type="submit" className="btn btn-primary fw-semibold">
+              <button
+                type="submit"
+                className="btn btn-primary fw-semibold w-100 w-sm-auto order-1 order-sm-2"
+              >
                 <i className="bi bi-check-lg me-1" /> Save changes
               </button>
             </div>

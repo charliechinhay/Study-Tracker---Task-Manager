@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { apiRequest, BASE_URL } from "../../services/api";
 import { toast } from "react-hot-toast";
+import "./login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -53,7 +54,7 @@ function Login() {
     <div className="auth-wrapper">
       <div className="auth-card bg-body rounded-4 shadow-lg p-4 p-md-5">
         <div className="text-center mb-4">
-          <div style={{ fontSize: "2.5rem" }}>📚</div>
+          <div className="icon-book-25">📚</div>
           <h2 className="fw-bold mt-2 mb-1">Welcome back</h2>
           <p className="text-muted small mb-0">Sign in to your account</p>
         </div>

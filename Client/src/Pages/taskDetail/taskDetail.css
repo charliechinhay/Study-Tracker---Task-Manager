@@ -3,3 +3,39 @@
   object-fit: cover;
   width: 100%;
 }
+
+.incon-error-face {
+  font-size: 3rem;
+}
+
+@media (max-width: 768px) {
+  .img-detail {
+    max-height: 250px;
+  }
+
+  .task-detail-card .card-body {
+    padding: 1.5rem !important;
+  }
+
+  .task-detail-title {
+    font-size: 1.5rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .img-detail {
+    max-height: 200px;
+  }
+
+  .task-detail-card .card-body {
+    padding: 1rem !important;
+  }
+
+  .task-detail-title {
+    font-size: 1.25rem !important;
+  }
+
+  .badge.fs-6 {
+    font-size: 0.75rem !important;
+  }
+}

@@ -21,8 +21,8 @@ function TaskCard({ task, onDelete, onToggle, onEdit }) {
         task.completed
           ? "border-success border-opacity-50"
           : isOverdue
-          ? "border-danger border-opacity-50"
-          : ""
+            ? "border-danger border-opacity-50"
+            : ""
       }`}
     >
       {task.image?.url && (
@@ -33,8 +33,8 @@ function TaskCard({ task, onDelete, onToggle, onEdit }) {
         />
       )}
       <div className="card-body py-3">
-        <div className="d-flex justify-content-between align-items-center gap-2">
-          <div className="flex-grow-1" style={{ minWidth: 0 }}>
+        <div className="d-flex justify-content-between align-items-start gap-2 flex-column flex-sm-row">
+          <div className="flex-grow-1 w-100">
             <p
               className={`mb-1 fw-medium ${
                 task.completed ? "text-decoration-line-through text-muted" : ""
@@ -51,8 +51,18 @@ function TaskCard({ task, onDelete, onToggle, onEdit }) {
                   className={`badge ${isOverdue ? "bg-danger" : "bg-secondary"}`}
                 >
                   <i className="bi bi-calendar3 me-1" />
-                  {new Date(task.dueDate).toLocaleDateString()}
-                  {isOverdue && " · Overdue"}
+                  <span className="d-none d-sm-inline">
+                    {new Date(task.dueDate).toLocaleDateString()}
+                  </span>
+                  <span className="d-inline d-sm-none">
+                    {new Date(task.dueDate).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </span>
+                  {isOverdue && (
+                    <span className="d-none d-sm-inline"> · Overdue</span>
+                  )}
                 </span>
               )}
               {task.completed && (
@@ -63,7 +73,7 @@ function TaskCard({ task, onDelete, onToggle, onEdit }) {
               )}
             </div>
           </div>
-          <div className="d-flex gap-1 flex-shrink-0">
+          <div className="d-flex gap-1 flex-shrink-0 align-self-end align-self-sm-start task-card-actions">
             <button
               className="btn btn-sm btn-outline-secondary"
               title="View details"
@@ -73,9 +83,7 @@ function TaskCard({ task, onDelete, onToggle, onEdit }) {
             </button>
             <button
               className={`btn btn-sm ${
-                task.completed
-                  ? "btn-outline-secondary"
-                  : "btn-outline-success"
+                task.completed ? "btn-outline-secondary" : "btn-outline-success"
               }`}
               title={task.completed ? "Mark as active" : "Mark as done"}
               onClick={() => onToggle(task)}

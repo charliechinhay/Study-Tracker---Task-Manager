@@ -7,3 +7,25 @@
   max-height: 200px;
   object-fit: cover;
 }
+
+@media (max-width: 576px) {
+  .modal-dialog {
+    margin: 0.5rem;
+  }
+
+  .img-preview {
+    max-height: 150px;
+  }
+
+  .modal-content {
+    border-radius: 1rem !important;
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .modal-footer {
+    padding: 1rem;
+  }
+}

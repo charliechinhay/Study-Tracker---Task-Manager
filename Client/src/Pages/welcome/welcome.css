@@ -1,3 +1,40 @@
 .welcome-hero {
   background: linear-gradient(135deg, #6366f1 0%, #44258b 100%);
 }
+
+.icon-book {
+  font-size: 3.5rem;
+}
+
+.text-white-book {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+@media (max-width: 768px) {
+  .welcome-hero {
+    padding: 1rem;
+  }
+
+  .welcome-hero h1 {
+    font-size: 2rem !important;
+  }
+
+  .welcome-hero .btn-lg {
+    padding: 0.75rem 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .welcome-hero h1 {
+    font-size: 1.75rem !important;
+  }
+
+  .welcome-hero .btn-lg {
+    padding: 0.625rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .welcome-hero p {
+    font-size: 0.95rem;
+  }
+}
