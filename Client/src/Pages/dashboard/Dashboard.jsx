@@ -8,6 +8,7 @@ import Statistics from "../../components/statistics/Statistics";
 import EditTaskModal from "../../components/editTaskModal/EditTaskModal";
 import TaskCardSkeleton from "../../components/taskCardSkeleton/TaskCardSkeleton";
 import SortableTaskCard from "../../components/sortableTaskCard/SortableTaskCard";
+import { AnimatePresence } from "framer-motion";
 import {
   DndContext,
   closestCenter,
@@ -306,15 +307,17 @@ function Dashboard() {
                 items={filteredTasks.map((t) => t._id)}
                 strategy={verticalListSortingStrategy}
               >
-                {filteredTasks.map((task) => (
-                  <SortableTaskCard
-                    key={task._id}
-                    task={task}
-                    onDelete={handleDelete}
-                    onToggle={handleToggle}
-                    onEdit={handleEdit}
-                  />
-                ))}
+                <AnimatePresence>
+                  {filteredTasks.map((task) => (
+                    <SortableTaskCard
+                      key={task._id}
+                      task={task}
+                      onDelete={handleDelete}
+                      onToggle={handleToggle}
+                      onEdit={handleEdit}
+                    />
+                  ))}
+                </AnimatePresence>
               </SortableContext>
             </DndContext>
           )}
