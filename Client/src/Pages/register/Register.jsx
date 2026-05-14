@@ -36,7 +36,8 @@ function Register() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${BASE_URL.replace('/api', '')}/api/auth/google`;
+    const baseUrl = BASE_URL.replace(/\/api.*$/, "").replace(/\/+$/, "");
+    window.location.href = `${baseUrl}/api/auth/google`;
   };
 
   if (success) {
