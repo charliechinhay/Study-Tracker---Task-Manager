@@ -10,7 +10,10 @@ export const apiRequest = async (endpoint, options = {}) => {
   const cleanBase = BASE_URL.replace(/\/+$/, "");
   const cleanEndpoint = endpoint.replace(/^\/+/, "");
 
-  const res = await fetch(`${cleanBase}/${cleanEndpoint}`, {
+  const finalUrl = `${cleanBase}/${cleanEndpoint}`;
+  console.log("🌐 Fetching:", finalUrl);
+
+  const res = await fetch(finalUrl, {
     headers: {
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
       Authorization: token ? `Bearer ${token}` : "",
