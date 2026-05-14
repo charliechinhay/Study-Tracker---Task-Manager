@@ -4,6 +4,7 @@ import { useState } from "react";
 function TaskForm({ onAdd }) {
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("medium");
+  const [category, setCategory] = useState("other");
   const [dueDate, setDueDate] = useState("");
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -23,6 +24,7 @@ function TaskForm({ onAdd }) {
     const formData = new FormData();
     formData.append("title", title.trim());
     formData.append("priority", priority);
+    formData.append("category", category);
     formData.append("description", description.trim());
     if (dueDate) formData.append("dueDate", dueDate);
     if (image) formData.append("image", image);
@@ -31,6 +33,7 @@ function TaskForm({ onAdd }) {
     setTitle("");
     setDescription("");
     setPriority("medium");
+    setCategory("other");
     setDueDate("");
     setImage(null);
     setPreview(null);
@@ -74,6 +77,22 @@ function TaskForm({ onAdd }) {
                   <option value="low">🟢 Low Priority</option>
                   <option value="medium">🟡 Medium Priority</option>
                   <option value="high">🔴 High Priority</option>
+                </select>
+                <select
+                  className="form-select"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                >
+                  <option value="math">Math</option>
+                  <option value="science">Science</option>
+                  <option value="language">Language</option>
+                  <option value="history">History</option>
+                  <option value="programming">Programming</option>
+                  <option value="literature">Literature</option>
+                  <option value="assignment">Assignment</option>
+                  <option value="exam">Exam</option>
+                  <option value="project">Project</option>
+                  <option value="other">Other</option>
                 </select>
                 <input
                   type="date"

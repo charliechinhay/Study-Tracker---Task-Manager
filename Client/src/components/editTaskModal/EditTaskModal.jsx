@@ -5,6 +5,7 @@ function EditTaskModal({ task, onSave, onClose }) {
   const [title, setTitle] = useState(task.title);
   const [priority, setPriority] = useState(task.priority);
   const [description, setDescription] = useState(task.description || "");
+  const [category, setCategory] = useState(task.category || "other");
   const [dueDate, setDueDate] = useState(
     task.dueDate ? new Date(task.dueDate).toISOString().split("T")[0] : "",
   );
@@ -24,6 +25,7 @@ function EditTaskModal({ task, onSave, onClose }) {
     const formData = new FormData();
     formData.append("title", title.trim());
     formData.append("priority", priority);
+    formData.append("category", category);
     formData.append("description", description.trim());
     if (dueDate) formData.append("dueDate", dueDate);
     if (image) formData.append("image", image);
@@ -73,6 +75,25 @@ function EditTaskModal({ task, onSave, onClose }) {
                   <option value="low">🟢 Low</option>
                   <option value="medium">🟡 Medium</option>
                   <option value="high">🔴 High</option>
+                </select>
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Category</label>
+                <select
+                  className="form-select"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                >
+                  <option value="math">📐 Math</option>
+                  <option value="science">🔬 Science</option>
+                  <option value="language">🗣️ Language</option>
+                  <option value="history">📜 History</option>
+                  <option value="programming">💻 Programming</option>
+                  <option value="literature">📚 Literature</option>
+                  <option value="assignment">📝 Assignment</option>
+                  <option value="exam">📖 Exam</option>
+                  <option value="project">🎯 Project</option>
+                  <option value="other">🔷 Other</option>
                 </select>
               </div>
               <div className="mb-3">

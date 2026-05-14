@@ -1,13 +1,26 @@
 import "./taskCard.css";
 import { useNavigate } from "react-router-dom";
 
-function TaskCard({ task, onDelete, onToggle, onEdit }) {
+function TaskCard({ task, onDelete, onToggle, onEdit, dragHandleProps }) {
   const navigate = useNavigate();
 
   const priorityBadge = {
     low: "success",
     medium: "warning",
     high: "danger",
+  };
+
+  const categoryLabels = {
+    math: "📐 Math",
+    science: "🔬 Science",
+    language: "🗣️ Language",
+    history: "📜 History",
+    programming: "💻 Programming",
+    literature: "📚 Literature",
+    assignment: "📝 Assignment",
+    exam: "📖 Exam",
+    project: "🎯 Project",
+    other: "🔷 Other",
   };
 
   const hasDueDate = !!task.dueDate;
@@ -34,6 +47,16 @@ function TaskCard({ task, onDelete, onToggle, onEdit }) {
       )}
       <div className="card-body py-3">
         <div className="d-flex justify-content-between align-items-start gap-2 flex-column flex-sm-row">
+          {dragHandleProps && (
+            <div
+              {...dragHandleProps}
+              className="drag-handle d-flex align-items-center me-2"
+              style={{ cursor: "grab" }}
+              title="Drag to reorder"
+            >
+              <i className="bi bi-grip-vertical text-muted" />
+            </div>
+          )}
           <div className="flex-grow-1 w-100">
             <p
               className={`mb-1 fw-medium ${
@@ -52,6 +75,9 @@ function TaskCard({ task, onDelete, onToggle, onEdit }) {
             <div className="d-flex gap-2 flex-wrap">
               <span className={`badge bg-${priorityBadge[task.priority]}`}>
                 {task.priority}
+              </span>
+              <span className="badge bg-info">
+                {categoryLabels[task.category]}
               </span>
               {task.dueDate && (
                 <span

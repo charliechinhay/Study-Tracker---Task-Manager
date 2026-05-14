@@ -4,17 +4,42 @@ import { useEffect, useState } from "react";
 import { apiRequest } from "../../services/api";
 import TaskCard from "../../components/taskCard/TaskCard";
 import TaskForm from "../../components/taskForm/TaskForm";
+import Statistics from "../../components/statistics/Statistics";
 import EditTaskModal from "../../components/editTaskModal/EditTaskModal";
 import TaskCardSkeleton from "../../components/taskCardSkeleton/TaskCardSkeleton";
+import SortableTaskCard from "../../components/sortableTaskCard/SortableTaskCard";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [editingTask, setEditingTask] = useState(null);
   const [search, setSearch] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [showStats, setShowStats] = useState(false);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   useEffect(() => {
     apiRequest("tasks")
@@ -89,26 +114,34 @@ function Dashboard() {
       if (filter === "completed") return t.completed;
       return true;
     })
+    .filter((t) => {
+      if (categoryFilter === "all") return true;
+      return t.category === categoryFilter;
+    })
     .filter((t) => t.title.toLowerCase().includes(search.toLowerCase()));
 
   const completedCount = tasks.filter((t) => t.completed).length;
   const totalCount = tasks.length;
-  const progress =
-    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return (
     <div className="container-fluid px-2 px-sm-3">
       <div className="d-flex justify-content-between align-items-start align-items-sm-center mb-3 flex-column flex-sm-row gap-2">
         <div>
-          <h2 className="fw-bold mb-0">My Tasks</h2>
+          <h2 className="fw-bold mb-2">My Tasks</h2>
           {userEmail && (
-            <small className="text-muted">
+            <div className="text-muted small mb-2">
               <i className="bi bi-person-circle me-1" />
-              <span className="d-none d-sm-inline">{userEmail}</span>
-            </small>
+              {userEmail}
+            </div>
           )}
+          <button
+            className={`btn btn-sm ${showStats ? "btn-primary" : "btn-outline-primary"}`}
+            onClick={() => setShowStats(!showStats)}
+          >
+            📊 {showStats ? "Hide" : "Show"} Stats
+          </button>
         </div>
-        <span className="text-muted small fw-medium align-self-start align-self-sm-auto">
+        <span className="text-muted small fw-medium align-self-start align-self-sm-auto ">
           {completedCount}/{totalCount} completed
         </span>
       </div>
@@ -118,8 +151,10 @@ function Dashboard() {
           <div
             className="progress-bar bg-success dashboard-progress-bar"
             role="progressbar"
-            style={{ "--progress-width": `${progress}%` }}
-            aria-valuenow={progress}
+            style={{
+              "--progress-width": `${(completedCount / totalCount) * 100}%`,
+            }}
+            aria-valuenow={(completedCount / totalCount) * 100}
             aria-valuemin={0}
             aria-valuemax={100}
           />
@@ -134,6 +169,12 @@ function Dashboard() {
             className="btn-close"
             onClick={() => setError("")}
           />
+        </div>
+      )}
+
+      {showStats && (
+        <div className="mb-4">
+          <Statistics tasks={tasks} />
         </div>
       )}
 
@@ -156,6 +197,25 @@ function Dashboard() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+          </div>
+          <div className="mb-3">
+            <select
+              className="form-select"
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+            >
+              <option value="all">All Categories</option>
+              <option value="math">📐 Math</option>
+              <option value="science">🔬 Science</option>
+              <option value="language">🗣️ Language</option>
+              <option value="history">📜 History</option>
+              <option value="programming">💻 Programming</option>
+              <option value="literature">📚 Literature</option>
+              <option value="assignment">📝 Assignment</option>
+              <option value="exam">📖 Exam</option>
+              <option value="project">🎯 Project</option>
+              <option value="other">🔷 Other</option>
+            </select>
           </div>
 
           <div className="btn-group mb-4 w-100 d-flex">
@@ -206,15 +266,57 @@ function Dashboard() {
               </p>
             </div>
           ) : (
-            filteredTasks.map((task) => (
-              <TaskCard
-                key={task._id}
-                task={task}
-                onDelete={handleDelete}
-                onToggle={handleToggle}
-                onEdit={handleEdit}
-              />
-            ))
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={({ active, over }) => {
+                if (active.id !== over.id) {
+                  const oldIndex = filteredTasks.findIndex(
+                    (t) => t._id === active.id,
+                  );
+                  const newIndex = filteredTasks.findIndex(
+                    (t) => t._id === over.id,
+                  );
+                  const reordered = arrayMove(
+                    filteredTasks,
+                    oldIndex,
+                    newIndex,
+                  );
+
+                  setTasks((prev) => {
+                    const newOrder = reordered.map((t) => t._id);
+                    const sorted = [...prev].sort((a, b) => {
+                      return newOrder.indexOf(a._id) - newOrder.indexOf(b._id);
+                    });
+                    return sorted;
+                  });
+
+                  apiRequest("tasks", {
+                    method: "PATCH",
+                    body: JSON.stringify({
+                      tasks: reordered.map((t) => ({ _id: t._id })),
+                    }),
+                  }).catch(() => {
+                    toast.error("Failed to reorder tasks.");
+                  });
+                }
+              }}
+            >
+              <SortableContext
+                items={filteredTasks.map((t) => t._id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {filteredTasks.map((task) => (
+                  <SortableTaskCard
+                    key={task._id}
+                    task={task}
+                    onDelete={handleDelete}
+                    onToggle={handleToggle}
+                    onEdit={handleEdit}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           )}
         </div>
       </div>

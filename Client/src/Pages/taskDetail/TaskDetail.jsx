@@ -24,6 +24,19 @@ function TaskDetails() {
     high: "danger",
   };
 
+  const categoryLabels = {
+    math: "📐 Math",
+    science: "🔬 Science",
+    language: "🗣️ Language",
+    history: "📜 History",
+    programming: "💻 Programming",
+    literature: "📚 Literature",
+    assignment: "📝 Assignment",
+    exam: "📖 Exam",
+    project: "🎯 Project",
+    other: "🔷 Other",
+  };
+
   if (loading) {
     return <TaskDetailSkeleton />;
   }
@@ -108,6 +121,9 @@ function TaskDetails() {
                     <i className="bi bi-clock me-1" /> Active
                   </>
                 )}
+              </span>
+              <span className="badge bg-info fs-6">
+                {categoryLabels[task.category]}
               </span>
               {isOverdue && (
                 <span className="badge bg-danger fs-6">

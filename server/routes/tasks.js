@@ -10,6 +10,7 @@ const router = express.Router();
 router.get("/", auth, async (req, res) => {
   try {
     const tasks = await Task.find({ user: req.user.id }).sort({
+      order: 1,
       createdAt: -1,
     });
     res.json(tasks);
@@ -38,7 +39,7 @@ router.get("/:id", auth, async (req, res) => {
 //POST / api / tasks - create a new task
 router.post("/", auth, upload.single("image"), async (req, res) => {
   try {
-    const { title, description, priority, dueDate } = req.body;
+    const { title, description, priority, category, dueDate } = req.body;
 
     if (!title) {
       return res.status(400).json({ message: "Title is required" });
@@ -49,6 +50,7 @@ router.post("/", auth, upload.single("image"), async (req, res) => {
       title,
       description,
       priority,
+      category,
       dueDate,
       image: req.file
         ? { url: req.file.path, publicId: req.file.filename }
@@ -73,13 +75,23 @@ router.patch("/:id", auth, upload.single("image"), async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    const { title, description, completed, priority, dueDate } = req.body;
+    const {
+      title,
+      description,
+      completed,
+      priority,
+      category,
+      dueDate,
+      order,
+    } = req.body;
 
     if (title !== undefined) task.title = title;
     if (description !== undefined) task.description = description;
     if (completed !== undefined) task.completed = completed;
     if (priority !== undefined) task.priority = priority;
+    if (category !== undefined) task.category = category;
     if (dueDate !== undefined) task.dueDate = dueDate;
+    if (order !== undefined) task.order = order;
 
     if (req.file) {
       if (task.image.publicId) {
@@ -91,6 +103,25 @@ router.patch("/:id", auth, upload.single("image"), async (req, res) => {
     await task.save();
 
     res.json(task);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// PATCH /api/tasks/reorder - reorder tasks
+router.patch("/", auth, async (req, res) => {
+  try {
+    const { tasks } = req.body;
+
+    const bulkOps = tasks.map((task, index) => ({
+      updateOne: {
+        filter: { _id: task._id, user: req.user.id },
+        update: { order: index },
+      },
+    }));
+
+    await Task.bulkWrite(bulkOps);
+    res.json({ message: "Tasks reordered" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

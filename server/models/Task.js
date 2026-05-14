@@ -10,6 +10,22 @@ const taskSchema = new mongoose.Schema(
       enum: ["low", "medium", "high"],
       default: "medium",
     },
+    category: {
+      type: String,
+      enum: [
+        "math",
+        "science",
+        "language",
+        "history",
+        "programming",
+        "literature",
+        "assignment",
+        "exam",
+        "project",
+        "other",
+      ],
+      default: "other",
+    },
     dueDate: { type: Date, default: null },
     image: {
       url: {
@@ -19,7 +35,13 @@ const taskSchema = new mongoose.Schema(
       publicId: { type: String, default: null },
     },
     completed: { type: Boolean, default: false },
+
+    order: {
+      type: Number,
+      default: 0,
+    },
   },
+
   { timestamps: true },
 );
 
