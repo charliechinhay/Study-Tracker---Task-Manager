@@ -64,12 +64,6 @@ A full-stack task management application designed for students, featuring drag-a
 - **Cloudinary** - Image hosting
 - **Resend** - Email service
 
----
-
-## 📸 Screenshots
-
-> Add screenshots here after deployment
-
 ![Dashboard](./screenshots/dashboard.png)
 ![Task Detail](./screenshots/task-detail.png)
 ![Statistics](./screenshots/statistics.png)
