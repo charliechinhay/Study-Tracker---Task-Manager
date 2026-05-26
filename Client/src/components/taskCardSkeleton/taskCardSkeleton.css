@@ -1,28 +1,40 @@
+@keyframes skeleton-shimmer {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
+.skeleton-pulse {
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  background: var(--bs-secondary-bg);
+  border-radius: 4px;
+}
+
 .skeleton-content-wrapper {
   flex: 1;
+  min-width: 0;
 }
 
 .skeleton-title {
-  height: 20px;
-  width: 70%;
+  height: 16px;
+  width: 55%;
+  margin-bottom: 0.5rem;
 }
 
 .skeleton-badge-small {
-  height: 24px;
-  width: 60px;
+  height: 18px;
+  width: 52px;
+  border-radius: 99px !important;
 }
 
 .skeleton-badge-medium {
-  height: 24px;
-  width: 100px;
+  height: 18px;
+  width: 80px;
+  border-radius: 99px !important;
 }
 
 .skeleton-button-small {
-  height: 31px;
-  width: 50px;
-}
-
-.skeleton-button-medium {
-  height: 31px;
-  width: 60px;
+  height: 30px;
+  width: 30px;
+  border-radius: var(--radius-sm) !important;
 }

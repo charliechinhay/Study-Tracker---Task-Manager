@@ -1,3 +1,4 @@
+import "./statistics.css";
 import {
   PieChart,
   Pie,
@@ -8,121 +9,107 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
+
+const tooltipStyle = {
+  fontSize: "0.8125rem",
+  borderRadius: "0.5rem",
+  border: "1px solid var(--bs-border-color)",
+  background: "var(--bs-body-bg)",
+};
+
+function StatCard({ icon, label, value, color }) {
+  return (
+    <div className="stat-card">
+      <div className="d-flex align-items-center justify-content-between">
+        <div>
+          <p className="stat-card-label text-muted">{label}</p>
+          <p className="stat-card-value" style={{ color }}>{value}</p>
+        </div>
+        <span className="stat-card-icon">{icon}</span>
+      </div>
+    </div>
+  );
+}
 
 function Statistics({ tasks }) {
   const completed = tasks.filter((t) => t.completed).length;
   const active = tasks.filter((t) => !t.completed).length;
-
-  const completionData = [
-    { name: "Completed", value: completed, color: "#198754" },
-    { name: "Active", value: active, color: "#6c757d" },
-  ];
-
-  const priorityData = [
-    {
-      name: "High",
-      count: tasks.filter((t) => t.priority === "High").length,
-      color: "#dc3545",
-    },
-    {
-      name: "Medium",
-      count: tasks.filter((t) => t.priority === "Medium").length,
-      color: "#ffc107",
-    },
-    {
-      name: "Low",
-      count: tasks.filter((t) => t.priority === "Low").length,
-      color: "#198754",
-    },
-  ];
-
   const completionRate =
     tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
 
+  const completionData = [
+    { name: "Completed", value: completed, color: "#10b981" },
+    { name: "Active", value: active, color: "#6366f1" },
+  ];
+
+  const priorityData = [
+    { name: "High", count: tasks.filter((t) => t.priority === "high").length, color: "#ef4444" },
+    { name: "Med", count: tasks.filter((t) => t.priority === "medium").length, color: "#f59e0b" },
+    { name: "Low", count: tasks.filter((t) => t.priority === "low").length, color: "#10b981" },
+  ];
+
   return (
     <div>
-      <h3 className="mb-4">Statistics</h3>
-
-      <div className="row g-3 mb-4">
-        <div className="col-md-3">
-          <div className="card text-center p-3">
-            <h5 className="text-muted mb-2">Total Tasks</h5>
-            <h2 className="mb-0">{tasks.length}</h2>
-          </div>
+      <div className="row g-3 mb-3">
+        <div className="col-6 col-sm-3">
+          <StatCard icon="📋" label="Total" value={tasks.length} />
         </div>
-        <div className="col-md-3">
-          <div className="card text-center p-3">
-            <h5 className="text-muted mb-2">Completed</h5>
-            <h2 className="mb-0 text-success">{completed}</h2>
-          </div>
+        <div className="col-6 col-sm-3">
+          <StatCard icon="✅" label="Done" value={completed} color="#10b981" />
         </div>
-        <div className="col-md-3">
-          <div className="card text-center p-3">
-            <h5 className="text-muted mb-2">Active</h5>
-            <h2 className="mb-0 text-secondary">{active}</h2>
-          </div>
+        <div className="col-6 col-sm-3">
+          <StatCard icon="⏳" label="Active" value={active} color="#6366f1" />
         </div>
-        <div className="col-md-3">
-          <div className="card text-center p-3">
-            <h5 className="text-muted mb-2">Completion Rate</h5>
-            <h2 className="mb-0 text-primary">{completionRate}%</h2>
-          </div>
+        <div className="col-6 col-sm-3">
+          <StatCard icon="📈" label="Rate" value={`${completionRate}%`} color="#f59e0b" />
         </div>
       </div>
 
-      <div className="row g-3">
-        <div className="col-md-6">
-          <div className="card p-3">
-            <h5 className="mb-3">Completion Status</h5>
-            {tasks.length === 0 ? (
-              <p className="text-muted text-center">No tasks yet</p>
-            ) : (
-              <ResponsiveContainer width="100%" height={250}>
+      {tasks.length > 0 && (
+        <div className="row g-3">
+          <div className="col-12 col-sm-6">
+            <div className="stat-card">
+              <p className="stat-chart-label text-muted">Completion</p>
+              <ResponsiveContainer width="100%" height={180}>
                 <PieChart>
                   <Pie
                     data={completionData}
                     cx="50%"
                     cy="50%"
-                    outerRadius={80}
+                    outerRadius={65}
+                    innerRadius={35}
                     dataKey="value"
-                    label
+                    paddingAngle={3}
                   >
-                    {completionData.map((entry, index) => (
-                      <Cell key={index} fill={entry.color} />
+                    {completionData.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip />
-                  <Legend />
+                  <Tooltip contentStyle={tooltipStyle} />
                 </PieChart>
               </ResponsiveContainer>
-            )}
+            </div>
           </div>
-        </div>
-
-        <div className="col-md-6">
-          <div className="card p-3">
-            <h5 className="mb-3">Tasks by Priority</h5>
-            {tasks.length === 0 ? (
-              <p className="text-muted text-center">No tasks yet</p>
-            ) : (
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={priorityData}>
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="count">
-                    {priorityData.map((entry, index) => (
-                      <Cell key={index} fill={entry.color} />
+          <div className="col-12 col-sm-6">
+            <div className="stat-card">
+              <p className="stat-chart-label text-muted">By Priority</p>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={priorityData} barSize={32}>
+                  <XAxis dataKey="name" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} width={24} />
+                  <Tooltip contentStyle={tooltipStyle} />
+                  <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                    {priorityData.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
                     ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
-            )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

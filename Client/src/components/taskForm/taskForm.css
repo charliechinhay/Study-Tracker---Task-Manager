@@ -1,32 +1,97 @@
-.border-dashed {
-  border-style: dashed !important;
+.task-form-card {
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-sm);
 }
 
-.image-preview {
+.task-form-section {
+  padding: 1rem;
+}
+
+.task-form-title-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.task-form-title-input {
+  border-radius: var(--radius-sm) !important;
+  font-size: 0.9375rem;
+  border: 1px solid var(--bs-border-color);
+  background: transparent;
+  padding: 0.5rem 0.75rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.task-form-add-btn {
+  border-radius: var(--radius-sm) !important;
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.task-form-expanded {
+  border-top: 1px solid var(--bs-border-color);
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.task-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.task-form-select,
+.task-form-date {
+  font-size: 0.8125rem !important;
+  padding: 0.4rem 0.6rem !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.task-form-desc {
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm) !important;
+  resize: none;
+}
+
+.task-form-file-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--bs-secondary-color);
+  cursor: pointer;
+  padding: 0.4rem 0;
+}
+
+.task-form-file-label:hover {
+  color: var(--bs-body-color);
+}
+
+.task-form-preview {
   width: 100%;
-  max-height: 200px;
+  max-height: 140px;
   object-fit: cover;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
+  margin-top: 0.25rem;
 }
 
 @media (max-width: 768px) {
-  .task-form-controls {
-    flex-direction: column !important;
-  }
-
-  .task-form-controls .form-select,
-  .task-form-controls .form-control {
-    width: 100% !important;
-  }
-
-  .image-preview {
-    max-height: 150px;
+  .task-form-row {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
 @media (max-width: 576px) {
-  .task-form .btn {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.875rem;
+  .task-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .task-form-section {
+    padding: 0.75rem;
   }
 }

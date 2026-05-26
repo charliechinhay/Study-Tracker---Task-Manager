@@ -2,166 +2,127 @@ import "./taskCard.css";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
+const categoryLabels = {
+  math: "📐 Math",
+  science: "🔬 Science",
+  language: "🗣️ Language",
+  history: "📜 History",
+  programming: "💻 Programming",
+  literature: "📚 Literature",
+  assignment: "📝 Assignment",
+  exam: "📖 Exam",
+  project: "🎯 Project",
+  other: "🔷 Other",
+};
+
 function TaskCard({ task, onDelete, onToggle, onEdit, dragHandleProps }) {
   const navigate = useNavigate();
 
-  const priorityBadge = {
-    low: "success",
-    medium: "warning",
-    high: "danger",
-  };
+  const isOverdue =
+    task.dueDate && !task.completed && new Date(task.dueDate) < new Date();
 
-  const categoryLabels = {
-    math: "📐 Math",
-    science: "🔬 Science",
-    language: "🗣️ Language",
-    history: "📜 History",
-    programming: "💻 Programming",
-    literature: "📚 Literature",
-    assignment: "📝 Assignment",
-    exam: "📖 Exam",
-    project: "🎯 Project",
-    other: "🔷 Other",
-  };
-
-  const hasDueDate = !!task.dueDate;
-  const isNotCompleted = !task.completed;
-  const isPastDue = new Date(task.dueDate) < new Date();
-  const isOverdue = hasDueDate && isNotCompleted && isPastDue;
+  const hasImage = !!task.image?.url;
 
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, x: -100 }}
-      transition={{ duration: 0.3 }}
-      whileHover={{ scale: 1.01 }}
+      exit={{ opacity: 0, x: -40, transition: { duration: 0.2 } }}
+      transition={{ duration: 0.25 }}
       className="mb-2"
     >
+      {hasImage && (
+        <img
+          src={task.image.url}
+          alt={task.title}
+          className="task-card-image"
+        />
+      )}
       <div
-        className={`card mb-2 task-card ${
-          task.completed
-            ? "border-success border-opacity-50"
-            : isOverdue
-              ? "border-danger border-opacity-50"
-              : ""
-        }`}
+        className={`task-card ${hasImage ? "has-image" : ""} ${task.completed ? "is-completed" : ""} priority-${task.priority}`}
       >
-        {task.image?.url && (
-          <img
-            src={task.image.url}
-            alt={task.title}
-            className="card-img-top image-preview"
-          />
-        )}
-        <div className="card-body py-3">
-          <div className="d-flex justify-content-between align-items-start gap-2 flex-column flex-sm-row">
+        <div className="card-body py-2 px-3">
+          <div className="d-flex align-items-start gap-2">
             {dragHandleProps && (
-              <div
-                {...dragHandleProps}
-                className="drag-handle d-flex align-items-center me-2"
-                style={{ cursor: "grab" }}
-                title="Drag to reorder"
-              >
-                <i className="bi bi-grip-vertical text-muted" />
+              <div {...dragHandleProps} className="drag-handle mt-1" title="Drag to reorder">
+                <i className="bi bi-grip-vertical" />
               </div>
             )}
-            <div className="flex-grow-1 w-100">
-              <p
-                className={`mb-1 fw-medium ${
-                  task.completed
-                    ? "text-decoration-line-through text-muted"
-                    : ""
-                }`}
-              >
-                {task.title}
-              </p>
+
+            <div className="flex-grow-1 min-w-0">
+              <div className="d-flex align-items-start justify-content-between gap-2">
+                <p
+                  className={`task-title ${
+                    task.completed ? "text-decoration-line-through text-muted" : ""
+                  }`}
+                >
+                  {task.title}
+                </p>
+
+                <div className="task-actions">
+                  <button
+                    className="task-action-btn"
+                    onClick={() => navigate(`/tasks/${task._id}`)}
+                    title="View details"
+                  >
+                    <i className="bi bi-arrow-up-right" />
+                  </button>
+                  <button
+                    className={`task-action-btn ${
+                      task.completed ? "btn-toggle-undo" : "btn-toggle-done"
+                    }`}
+                    onClick={() => onToggle(task)}
+                    title={task.completed ? "Mark as active" : "Mark as done"}
+                  >
+                    <i className={`bi bi-${task.completed ? "arrow-counterclockwise" : "check2"}`} />
+                  </button>
+                  <button
+                    className="task-action-btn"
+                    onClick={() => onEdit(task)}
+                    title="Edit task"
+                  >
+                    <i className="bi bi-pencil" />
+                  </button>
+                  <button
+                    className="task-action-btn btn-delete"
+                    onClick={() => onDelete(task._id)}
+                    title="Delete task"
+                  >
+                    <i className="bi bi-trash" />
+                  </button>
+                </div>
+              </div>
+
               {task.description && (
-                <p className="text-muted small mb-2 mt-1">
-                  {task.description.length > 60
-                    ? `${task.description.substring(0, 60)}...`
-                    : task.description}
+                <p className="task-description text-muted">
+                  {task.description}
                 </p>
               )}
-              <div className="d-flex gap-2 flex-wrap">
-                <span className={`badge bg-${priorityBadge[task.priority]}`}>
+
+              <div className="task-badges">
+                <span className={`task-badge task-badge-priority-${task.priority}`}>
                   {task.priority}
                 </span>
-                <span className="badge bg-info">
+                <span className="task-badge task-badge-category">
                   {categoryLabels[task.category]}
                 </span>
                 {task.dueDate && (
-                  <span
-                    className={`badge ${isOverdue ? "bg-danger" : "bg-secondary"}`}
-                  >
-                    <i className="bi bi-calendar3 me-1" />
-                    <span className="d-none d-sm-inline">
-                      {new Date(task.dueDate).toLocaleDateString()}
-                    </span>
-                    <span className="d-inline d-sm-none">
-                      {new Date(task.dueDate).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </span>
-                    {isOverdue && (
-                      <span className="d-none d-sm-inline"> · Overdue</span>
-                    )}
+                  <span className={`task-badge ${isOverdue ? "task-badge-overdue" : "task-badge-date"}`}>
+                    <i className="bi bi-calendar3" />
+                    {new Date(task.dueDate).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                    {isOverdue && " · overdue"}
                   </span>
                 )}
                 {task.completed && (
-                  <span className="badge bg-success bg-opacity-75">
-                    <i className="bi bi-check-circle me-1" />
-                    Done
+                  <span className="task-badge task-badge-done">
+                    <i className="bi bi-check2" /> done
                   </span>
                 )}
               </div>
-            </div>
-            <div className="d-flex gap-1 flex-shrink-0 align-self-end align-self-sm-start task-card-actions">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn btn-sm btn-outline-info"
-                onClick={() => navigate(`/tasks/${task._id}`)}
-              >
-                <i className="bi bi-eye" />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`btn btn-sm ${
-                  task.completed
-                    ? "btn-outline-secondary"
-                    : "btn-outline-success"
-                }`}
-                title={task.completed ? "Mark as active" : "Mark as done"}
-                onClick={() => onToggle(task)}
-              >
-                <i
-                  className={`bi bi-${
-                    task.completed ? "arrow-counterclockwise" : "check-lg"
-                  }`}
-                />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn btn-sm btn-outline-primary"
-                title="Edit task"
-                onClick={() => onEdit(task)}
-              >
-                <i className="bi bi-pencil" />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn btn-sm btn-outline-danger"
-                title="Delete task"
-                onClick={() => onDelete(task._id)}
-              >
-                <i className="bi bi-trash" />
-              </motion.button>
             </div>
           </div>
         </div>

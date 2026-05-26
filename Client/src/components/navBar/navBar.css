@@ -1,0 +1,74 @@
+.navbar-main {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  background-color: rgba(255, 255, 255, 0.92);
+}
+
+[data-bs-theme="dark"] .navbar-main {
+  background-color: rgba(33, 37, 41, 0.92);
+}
+
+.navbar-brand-custom {
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.navbar-brand-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.navbar-theme-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--bs-secondary-color);
+  padding: 0.35rem 0.6rem;
+  font-size: 0.8125rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+  cursor: pointer;
+}
+
+.navbar-theme-btn:hover {
+  background: var(--bs-tertiary-bg);
+  border-color: var(--bs-border-color);
+  color: var(--bs-body-color);
+}
+
+.navbar-theme-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.navbar-theme-label {
+  font-size: 0.8125rem;
+}
+
+.navbar-signout-btn {
+  background: transparent;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--radius-sm);
+  color: var(--bs-secondary-color);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.navbar-signout-btn:hover {
+  background: rgba(220, 53, 69, 0.06);
+  border-color: #dc3545;
+  color: #dc3545;
+}

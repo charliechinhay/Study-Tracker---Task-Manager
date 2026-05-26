@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -16,7 +15,6 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
     try {
       await apiRequest("/auth/register", {
@@ -24,12 +22,9 @@ function Register() {
         body: JSON.stringify({ email, password }),
       });
       setSuccess(true);
-      toast.success("Account created successfully!");
-    } catch (error) {
-      toast.error(
-        "Registration failed. Please check your details and try again. " +
-          error.message,
-      );
+      toast.success("Account created!");
+    } catch {
+      toast.error("Registration failed. Please check your details and try again.");
     } finally {
       setLoading(false);
     }
@@ -44,16 +39,16 @@ function Register() {
     return (
       <div className="auth-wrapper">
         <div className="auth-card bg-body rounded-4 shadow-lg p-4 p-md-5 text-center">
-          <div className="icon-success-create">✅</div>
-          <h2 className="fw-bold mt-3 mb-2">Account created!</h2>
-          <p className="text-muted mb-4">
-            Your account has been created successfully. You can now sign in.
+          <div className="icon-success-create mb-3">✅</div>
+          <h2 className="auth-heading fw-bold mb-2">Account created!</h2>
+          <p className="text-muted small mb-4">
+            Your account is ready. Sign in to get started.
           </p>
           <button
-            className="btn btn-primary btn-lg px-5 fw-semibold"
+            className="btn btn-primary px-5 fw-semibold"
             onClick={() => navigate("/login")}
           >
-            Go to Login
+            Go to sign in
           </button>
         </div>
       </div>
@@ -62,26 +57,22 @@ function Register() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.4 }}
+      exit={{ opacity: 0, y: -16 }}
+      transition={{ duration: 0.3 }}
       className="auth-wrapper"
     >
       <div className="auth-card bg-body rounded-4 shadow-lg p-4 p-md-5">
         <div className="text-center mb-4">
-          <div className="icon-book-25">📚</div>
-          <h2 className="fw-bold mt-2 mb-1">Create account</h2>
-          <p className="text-muted small mb-0">
-            Start tracking your study goals
-          </p>
+          <div className="icon-book-25 mb-2">📚</div>
+          <h2 className="auth-heading fw-bold mb-1">Create account</h2>
+          <p className="text-muted small mb-0">Start tracking your study goals</p>
         </div>
-
-        {error && <div className="alert alert-danger py-2 small">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label fw-medium">Email</label>
+            <label className="form-label fw-medium small">Email</label>
             <input
               type="email"
               className="form-control form-control-lg"
@@ -92,7 +83,7 @@ function Register() {
             />
           </div>
           <div className="mb-4">
-            <label className="form-label fw-medium">Password</label>
+            <label className="form-label fw-medium small">Password</label>
             <input
               type="password"
               className="form-control form-control-lg"
@@ -108,41 +99,26 @@ function Register() {
             disabled={loading}
           >
             {loading ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2" />
-                Creating account...
-              </>
+              <><span className="spinner-border spinner-border-sm me-2" />Creating…</>
             ) : (
               "Create account"
             )}
           </button>
         </form>
 
-        <div className="d-flex align-items-center my-4">
-          <hr className="flex-grow-1" />
-          <span className="px-3 text-muted small">or continue with</span>
-          <hr className="flex-grow-1" />
-        </div>
+        <div className="auth-divider">or continue with</div>
 
         <button
           className="btn btn-outline-secondary btn-lg w-100 d-flex align-items-center justify-content-center gap-2"
           onClick={handleGoogleLogin}
         >
-          <img
-            src="https://www.google.com/favicon.ico"
-            alt="Google"
-            width="18"
-            height="18"
-          />
+          <img src="https://www.google.com/favicon.ico" alt="Google" width="16" height="16" />
           Google
         </button>
 
         <p className="text-center mt-4 mb-0 small text-muted">
           Already have an account?{" "}
-          <Link
-            to="/login"
-            className="fw-semibold text-primary text-decoration-none"
-          >
+          <Link to="/login" className="fw-semibold text-primary text-decoration-none">
             Sign in
           </Link>
         </p>

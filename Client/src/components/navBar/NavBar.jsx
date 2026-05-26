@@ -1,3 +1,4 @@
+import "./navBar.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 
@@ -11,36 +12,33 @@ function NavBar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg border-bottom bg-body-tertiary">
+    <nav className="navbar border-bottom navbar-main">
       <div className="container">
         <Link
-          className="navbar-brand d-flex align-items-center gap-2 fw-bold fs-5"
+          className="navbar-brand navbar-brand-custom d-flex align-items-center gap-2 fw-semibold"
           to="/dashboard"
         >
-          <span>📚</span>{" "}
+          <span className="navbar-brand-icon">📚</span>
           <span className="d-none d-sm-inline">Study Tracker</span>
           <span className="d-inline d-sm-none">Tasks</span>
         </Link>
-        <div className="d-flex gap-1 gap-sm-2 align-items-center">
+
+        <div className="d-flex align-items-center gap-2">
           <button
-            className="btn btn-sm btn-outline-secondary rounded-pill px-2 px-sm-3"
+            className="navbar-theme-btn"
             onClick={toggleTheme}
-            title={
-              theme === "light" ? "Switch to dark mode" : "Switch to light mode"
-            }
+            title={theme === "light" ? "Dark mode" : "Light mode"}
           >
-            <span className="d-none d-sm-inline">
-              {theme === "light" ? "🌙 Dark" : "☀️ Light"}
-            </span>
-            <span className="d-inline d-sm-none">
+            <span className="navbar-theme-icon">
               {theme === "light" ? "🌙" : "☀️"}
             </span>
+            <span className="navbar-theme-label d-none d-sm-inline">
+              {theme === "light" ? "Dark" : "Light"}
+            </span>
           </button>
-          <button
-            className="btn btn-sm btn-danger rounded-pill px-2 px-sm-3"
-            onClick={handleLogout}
-          >
-            <span className="d-none d-sm-inline">Logout</span>
+
+          <button className="navbar-signout-btn" onClick={handleLogout}>
+            <span className="d-none d-sm-inline">Sign out</span>
             <span className="d-inline d-sm-none">
               <i className="bi bi-box-arrow-right" />
             </span>

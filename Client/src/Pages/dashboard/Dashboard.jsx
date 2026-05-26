@@ -55,10 +55,7 @@ function Dashboard() {
 
   const handleAdd = async (formData) => {
     try {
-      const newTask = await apiRequest("tasks", {
-        method: "POST",
-        body: formData,
-      });
+      const newTask = await apiRequest("tasks", { method: "POST", body: formData });
       setTasks((prev) => [...prev, newTask]);
       toast.success("Task added!");
     } catch {
@@ -70,7 +67,7 @@ function Dashboard() {
     try {
       await apiRequest(`tasks/${id}`, { method: "DELETE" });
       setTasks((prev) => prev.filter((t) => t._id !== id));
-      toast.success("Task deleted!");
+      toast.success("Task deleted.");
     } catch {
       toast.error("Failed to delete task.");
     }
@@ -82,17 +79,11 @@ function Dashboard() {
         method: "PATCH",
         body: JSON.stringify({ completed: !task.completed }),
       });
-      setTasks((prev) =>
-        prev.map((t) => (t._id === updated._id ? updated : t)),
-      );
-      toast.success("Task updated!");
+      setTasks((prev) => prev.map((t) => (t._id === updated._id ? updated : t)));
+      toast.success(updated.completed ? "Task completed!" : "Task reopened.");
     } catch {
       toast.error("Failed to update task.");
     }
-  };
-
-  const handleEdit = (task) => {
-    setEditingTask(task);
   };
 
   const handleEditSave = async ({ _id, formData }) => {
@@ -115,46 +106,46 @@ function Dashboard() {
       if (filter === "completed") return t.completed;
       return true;
     })
-    .filter((t) => {
-      if (categoryFilter === "all") return true;
-      return t.category === categoryFilter;
-    })
+    .filter((t) => categoryFilter === "all" || t.category === categoryFilter)
     .filter((t) => t.title.toLowerCase().includes(search.toLowerCase()));
 
   const completedCount = tasks.filter((t) => t.completed).length;
   const totalCount = tasks.length;
+  const activeCount = totalCount - completedCount;
 
   return (
-    <div className="container-fluid px-2 px-sm-3">
-      <div className="d-flex justify-content-between align-items-start align-items-sm-center mb-3 flex-column flex-sm-row gap-2">
+    <div>
+      {/* Header */}
+      <div className="dashboard-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
-          <h2 className="fw-bold mb-2">My Tasks</h2>
+          <h2 className="dashboard-title">My Tasks</h2>
           {userEmail && (
-            <div className="text-muted small mb-2">
-              <i className="bi bi-person-circle me-1" />
-              {userEmail}
-            </div>
+            <p className="dashboard-user-email text-muted">{userEmail}</p>
+          )}
+        </div>
+        <div className="d-flex align-items-center gap-2">
+          {totalCount > 0 && (
+            <span className="dashboard-count text-muted">
+              {completedCount}/{totalCount} done
+            </span>
           )}
           <button
-            className={`btn btn-sm ${showStats ? "btn-primary" : "btn-outline-primary"}`}
+            className={`stats-toggle-btn ${showStats ? "active" : ""}`}
             onClick={() => setShowStats(!showStats)}
           >
-            📊 {showStats ? "Hide" : "Show"} Stats
+            <i className="bi bi-bar-chart" />
+            <span className="d-none d-sm-inline">Stats</span>
           </button>
         </div>
-        <span className="text-muted small fw-medium align-self-start align-self-sm-auto ">
-          {completedCount}/{totalCount} completed
-        </span>
       </div>
 
+      {/* Progress */}
       {totalCount > 0 && (
         <div className="progress progress-thin mb-4">
           <div
-            className="progress-bar bg-success dashboard-progress-bar"
+            className="progress-bar bg-primary dashboard-progress-bar"
             role="progressbar"
-            style={{
-              "--progress-width": `${(completedCount / totalCount) * 100}%`,
-            }}
+            style={{ "--progress-width": `${(completedCount / totalCount) * 100}%` }}
             aria-valuenow={(completedCount / totalCount) * 100}
             aria-valuemin={0}
             aria-valuemax={100}
@@ -163,16 +154,13 @@ function Dashboard() {
       )}
 
       {error && (
-        <div className="alert alert-danger alert-dismissible py-2 small mb-4">
+        <div className="alert alert-danger alert-dismissible py-2 small mb-3 dashboard-alert">
           {error}
-          <button
-            type="button"
-            className="btn-close"
-            onClick={() => setError("")}
-          />
+          <button type="button" className="btn-close btn-close-sm" onClick={() => setError("")} />
         </div>
       )}
 
+      {/* Stats panel */}
       {showStats && (
         <div className="mb-4">
           <Statistics tasks={tasks} />
@@ -180,32 +168,34 @@ function Dashboard() {
       )}
 
       <div className="row g-3 g-lg-4">
+        {/* Left: form */}
         <div className="col-12 col-lg-4">
           <div className="dashboard-form-sticky">
+            <p className="dashboard-section-label text-muted">New task</p>
             <TaskForm onAdd={handleAdd} />
           </div>
         </div>
 
+        {/* Right: task list */}
         <div className="col-12 col-lg-8">
-          <div className="input-group mb-3">
-            <span className="input-group-text bg-transparent">
-              <i className="bi bi-search text-muted" />
-            </span>
-            <input
-              type="text"
-              className="form-control border-start-0"
-              placeholder="Search tasks..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <div className="mb-3">
+          {/* Search + category */}
+          <div className="d-flex gap-2 mb-3 flex-column flex-sm-row">
+            <div className="dashboard-search-wrapper">
+              <i className="bi bi-search dashboard-search-icon" />
+              <input
+                type="text"
+                className="form-control dashboard-search w-100"
+                placeholder="Search tasks…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
             <select
-              className="form-select"
+              className="form-select dashboard-select"
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
             >
-              <option value="all">All Categories</option>
+              <option value="all">All categories</option>
               <option value="math">📐 Math</option>
               <option value="science">🔬 Science</option>
               <option value="language">🗣️ Language</option>
@@ -219,34 +209,24 @@ function Dashboard() {
             </select>
           </div>
 
-          <div className="btn-group mb-4 w-100 d-flex">
-            <button
-              className={`btn btn-outline-secondary flex-fill ${filter === "all" ? "active" : ""}`}
-              onClick={() => setFilter("all")}
-            >
-              <span className="d-none d-sm-inline">All ({totalCount})</span>
-              <span className="d-inline d-sm-none">All</span>
-            </button>
-            <button
-              className={`btn btn-outline-secondary flex-fill ${filter === "active" ? "active" : ""}`}
-              onClick={() => setFilter("active")}
-            >
-              <span className="d-none d-sm-inline">
-                Active ({tasks.filter((t) => !t.completed).length})
-              </span>
-              <span className="d-inline d-sm-none">Active</span>
-            </button>
-            <button
-              className={`btn btn-outline-secondary flex-fill ${filter === "completed" ? "active" : ""}`}
-              onClick={() => setFilter("completed")}
-            >
-              <span className="d-none d-sm-inline">
-                Done ({completedCount})
-              </span>
-              <span className="d-inline d-sm-none">Done</span>
-            </button>
+          {/* Filter tabs */}
+          <div className="d-flex gap-2 mb-4 flex-wrap">
+            {[
+              { key: "all", label: `All (${totalCount})` },
+              { key: "active", label: `Active (${activeCount})` },
+              { key: "completed", label: `Done (${completedCount})` },
+            ].map(({ key, label }) => (
+              <button
+                key={key}
+                className={`dashboard-filter-tab ${filter === key ? "active" : ""}`}
+                onClick={() => setFilter(key)}
+              >
+                {label}
+              </button>
+            ))}
           </div>
 
+          {/* Task list */}
           {loading ? (
             <>
               <TaskCardSkeleton />
@@ -254,16 +234,16 @@ function Dashboard() {
               <TaskCardSkeleton />
             </>
           ) : filteredTasks.length === 0 ? (
-            <div className="text-center py-5">
+            <div className="dashboard-empty">
               <div className="dashboard-empty-icon">
                 {search ? "🔍" : filter === "completed" ? "🎉" : "📋"}
               </div>
-              <p className="text-muted mt-3">
+              <p className="text-muted small mb-0">
                 {search
                   ? `No tasks found for "${search}"`
                   : filter === "completed"
                     ? "No completed tasks yet"
-                    : "No tasks here — add one above!"}
+                    : "No tasks yet — add one!"}
               </p>
             </div>
           ) : (
@@ -271,36 +251,22 @@ function Dashboard() {
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragEnd={({ active, over }) => {
-                if (active.id !== over.id) {
-                  const oldIndex = filteredTasks.findIndex(
-                    (t) => t._id === active.id,
-                  );
-                  const newIndex = filteredTasks.findIndex(
-                    (t) => t._id === over.id,
-                  );
-                  const reordered = arrayMove(
-                    filteredTasks,
-                    oldIndex,
-                    newIndex,
-                  );
+                if (!over || active.id === over.id) return;
+                const oldIndex = filteredTasks.findIndex((t) => t._id === active.id);
+                const newIndex = filteredTasks.findIndex((t) => t._id === over.id);
+                const reordered = arrayMove(filteredTasks, oldIndex, newIndex);
 
-                  setTasks((prev) => {
-                    const newOrder = reordered.map((t) => t._id);
-                    const sorted = [...prev].sort((a, b) => {
-                      return newOrder.indexOf(a._id) - newOrder.indexOf(b._id);
-                    });
-                    return sorted;
-                  });
+                setTasks((prev) => {
+                  const newOrder = reordered.map((t) => t._id);
+                  return [...prev].sort(
+                    (a, b) => newOrder.indexOf(a._id) - newOrder.indexOf(b._id),
+                  );
+                });
 
-                  apiRequest("tasks", {
-                    method: "PATCH",
-                    body: JSON.stringify({
-                      tasks: reordered.map((t) => ({ _id: t._id })),
-                    }),
-                  }).catch(() => {
-                    toast.error("Failed to reorder tasks.");
-                  });
-                }
+                apiRequest("tasks", {
+                  method: "PATCH",
+                  body: JSON.stringify({ tasks: reordered.map((t) => ({ _id: t._id })) }),
+                }).catch(() => toast.error("Failed to reorder tasks."));
               }}
             >
               <SortableContext
@@ -314,7 +280,7 @@ function Dashboard() {
                       task={task}
                       onDelete={handleDelete}
                       onToggle={handleToggle}
-                      onEdit={handleEdit}
+                      onEdit={setEditingTask}
                     />
                   ))}
                 </AnimatePresence>

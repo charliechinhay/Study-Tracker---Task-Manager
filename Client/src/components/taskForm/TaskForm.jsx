@@ -1,5 +1,5 @@
 import "./taskForm.css";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 function TaskForm({ onAdd }) {
   const [title, setTitle] = useState("");
@@ -10,6 +10,7 @@ function TaskForm({ onAdd }) {
   const [preview, setPreview] = useState(null);
   const [expanded, setExpanded] = useState(false);
   const [description, setDescription] = useState("");
+  const fileRef = useRef(null);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -41,83 +42,92 @@ function TaskForm({ onAdd }) {
   };
 
   return (
-    <div className="card mb-4 border-dashed task-form">
-      <div className="card-body">
-        <form onSubmit={handleSubmit}>
-          <div className="d-flex gap-2 mb-2 flex-column flex-sm-row">
+    <div className="task-form-card">
+      <form onSubmit={handleSubmit}>
+        <div className="task-form-section">
+          <div className="task-form-title-row mb-2">
             <input
               type="text"
-              className="form-control"
-              placeholder="Add a new task..."
+              className="form-control task-form-title-input flex-grow-1"
+              placeholder="Add a new task…"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               onFocus={() => setExpanded(true)}
             />
-            <button type="submit" className="btn btn-primary px-4 fw-medium">
-              <i className="bi bi-plus-lg me-1" />
-              Add
+            <button type="submit" className="btn btn-primary task-form-add-btn">
+              <i className="bi bi-plus-lg" />
+              <span className="ms-1 d-none d-sm-inline">Add</span>
             </button>
           </div>
-          <textarea
-            className="form-control mb-2"
-            placeholder="Description (optional)..."
-            rows="2"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
 
           {expanded && (
-            <>
-              <div className="d-flex gap-2 mb-2 flex-column flex-md-row task-form-controls">
-                <select
-                  className="form-select"
-                  value={priority}
-                  onChange={(e) => setPriority(e.target.value)}
-                >
-                  <option value="low">🟢 Low Priority</option>
-                  <option value="medium">🟡 Medium Priority</option>
-                  <option value="high">🔴 High Priority</option>
-                </select>
-                <select
-                  className="form-select"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  <option value="math">Math</option>
-                  <option value="science">Science</option>
-                  <option value="language">Language</option>
-                  <option value="history">History</option>
-                  <option value="programming">Programming</option>
-                  <option value="literature">Literature</option>
-                  <option value="assignment">Assignment</option>
-                  <option value="exam">Exam</option>
-                  <option value="project">Project</option>
-                  <option value="other">Other</option>
-                </select>
-                <input
-                  type="date"
-                  className="form-control"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                />
-              </div>
-              <input
-                type="file"
-                className="form-control form-control-sm"
-                onChange={handleImageChange}
-                accept="image/*"
-              />
-              {preview && (
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="mt-2 image-preview"
-                />
-              )}
-            </>
+            <textarea
+              className="form-control task-form-desc"
+              placeholder="Description (optional)…"
+              rows="2"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
           )}
-        </form>
-      </div>
+        </div>
+
+        {expanded && (
+          <div className="task-form-expanded">
+            <div className="task-form-row">
+              <select
+                className="form-select task-form-select"
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+              >
+                <option value="low">🟢 Low</option>
+                <option value="medium">🟡 Medium</option>
+                <option value="high">🔴 High</option>
+              </select>
+              <select
+                className="form-select task-form-select"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option value="math">📐 Math</option>
+                <option value="science">🔬 Science</option>
+                <option value="language">🗣️ Language</option>
+                <option value="history">📜 History</option>
+                <option value="programming">💻 Programming</option>
+                <option value="literature">📚 Literature</option>
+                <option value="assignment">📝 Assignment</option>
+                <option value="exam">📖 Exam</option>
+                <option value="project">🎯 Project</option>
+                <option value="other">🔷 Other</option>
+              </select>
+              <input
+                type="date"
+                className="form-control task-form-date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+              />
+            </div>
+
+            <input
+              ref={fileRef}
+              type="file"
+              className="d-none"
+              onChange={handleImageChange}
+              accept="image/*"
+            />
+            <label
+              className="task-form-file-label"
+              onClick={() => fileRef.current?.click()}
+            >
+              <i className="bi bi-image" />
+              {image ? image.name : "Attach image (optional)"}
+            </label>
+
+            {preview && (
+              <img src={preview} alt="Preview" className="task-form-preview" />
+            )}
+          </div>
+        )}
+      </form>
     </div>
   );
 }

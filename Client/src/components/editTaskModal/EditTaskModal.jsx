@@ -1,5 +1,5 @@
 import "./editTaskModal.css";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 function EditTaskModal({ task, onSave, onClose }) {
   const [title, setTitle] = useState(task.title);
@@ -11,6 +11,7 @@ function EditTaskModal({ task, onSave, onClose }) {
   );
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(task.image?.url || null);
+  const fileRef = useRef(null);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -35,50 +36,66 @@ function EditTaskModal({ task, onSave, onClose }) {
   return (
     <div className="modal d-block" onClick={onClose}>
       <div
-        className="modal-dialog modal-dialog-centered modal-dialog-scrollable mx-2 mx-sm-auto"
+        className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-edit-dialog"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="modal-content rounded-4 shadow">
+        <div className="modal-content rounded-4">
           <div className="modal-header border-0 pb-0">
-            <h5 className="modal-title fw-bold">Edit Task</h5>
-            <button className="btn-close" onClick={onClose} />
+            <h6 className="modal-title fw-semibold">Edit Task</h6>
+            <button className="btn-close btn-close-sm" onClick={onClose} />
           </div>
+
           <form onSubmit={handleSubmit}>
             <div className="modal-body pt-3">
               <div className="mb-3">
-                <label className="form-label fw-medium">Title</label>
+                <label className="modal-form-label">Title</label>
                 <input
                   type="text"
                   className="form-control"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   required
+                  autoFocus
                 />
               </div>
+
               <div className="mb-3">
-                <label className="form-label">Description</label>
+                <label className="modal-form-label">Description</label>
                 <textarea
-                  className="form-control"
+                  className="form-control modal-textarea-noresize"
                   rows="3"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Optional..."
+                  placeholder="Optional…"
                 />
               </div>
-              <div className="mb-3">
-                <label className="form-label fw-medium">Priority</label>
-                <select
-                  className="form-select"
-                  value={priority}
-                  onChange={(e) => setPriority(e.target.value)}
-                >
-                  <option value="low">🟢 Low</option>
-                  <option value="medium">🟡 Medium</option>
-                  <option value="high">🔴 High</option>
-                </select>
+
+              <div className="row g-2 mb-3">
+                <div className="col-6">
+                  <label className="modal-form-label">Priority</label>
+                  <select
+                    className="form-select"
+                    value={priority}
+                    onChange={(e) => setPriority(e.target.value)}
+                  >
+                    <option value="low">🟢 Low</option>
+                    <option value="medium">🟡 Medium</option>
+                    <option value="high">🔴 High</option>
+                  </select>
+                </div>
+                <div className="col-6">
+                  <label className="modal-form-label">Due date</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                  />
+                </div>
               </div>
+
               <div className="mb-3">
-                <label className="form-label">Category</label>
+                <label className="modal-form-label">Category</label>
                 <select
                   className="form-select"
                   value={category}
@@ -96,45 +113,43 @@ function EditTaskModal({ task, onSave, onClose }) {
                   <option value="other">🔷 Other</option>
                 </select>
               </div>
-              <div className="mb-3">
-                <label className="form-label fw-medium">Due Date</label>
+
+              <div>
+                <label className="modal-form-label">Image</label>
                 <input
-                  type="date"
-                  className="form-control"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                />
-              </div>
-              <div className="mb-1">
-                <label className="form-label fw-medium">Image</label>
-                <input
+                  ref={fileRef}
                   type="file"
-                  className="form-control"
+                  className="d-none"
                   accept="image/*"
                   onChange={handleImageChange}
                 />
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-secondary w-100 modal-img-btn"
+                  onClick={() => fileRef.current?.click()}
+                >
+                  <i className="bi bi-image me-1" />
+                  {image ? image.name : "Choose image"}
+                </button>
                 {preview && (
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    className="img-preview mt-2 rounded"
-                  />
+                  <img src={preview} alt="Preview" className="img-preview" />
                 )}
               </div>
             </div>
-            <div className="modal-footer border-0 flex-column flex-sm-row gap-2">
+
+            <div className="modal-footer border-0 pt-0 gap-2">
               <button
                 type="button"
-                className="btn btn-outline-secondary w-100 w-sm-auto order-2 order-sm-1"
+                className="btn btn-outline-secondary btn-sm px-3 modal-footer-btn"
                 onClick={onClose}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="btn btn-primary fw-semibold w-100 w-sm-auto order-1 order-sm-2"
+                className="btn btn-primary btn-sm px-4 fw-medium modal-footer-btn"
               >
-                <i className="bi bi-check-lg me-1" /> Save changes
+                Save changes
               </button>
             </div>
           </form>
