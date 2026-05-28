@@ -179,7 +179,7 @@ function Dashboard() {
         {/* Right: task list */}
         <div className="col-12 col-lg-8">
           {/* Search + category */}
-          <div className="d-flex gap-2 mb-3 flex-column flex-sm-row">
+          <div className="d-flex gap-2 mb-3 flex-column">
             <div className="dashboard-search-wrapper">
               <i className="bi bi-search dashboard-search-icon" />
               <input
