@@ -283,7 +283,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 👤 Author
 
-**Charlie Chin Hay**
+**Charlie Chinchay**
 
 - GitHub: [@charliechinhay](https://github.com/charliechinhay)
 - LinkedIn: [https://www.linkedin.com/in/charlie-chinchay-824393394/]
