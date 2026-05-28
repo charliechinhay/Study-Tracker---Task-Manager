@@ -171,7 +171,6 @@ function Dashboard() {
         {/* Left: form */}
         <div className="col-12 col-lg-4">
           <div className="dashboard-form-sticky">
-            <p className="dashboard-section-label text-muted">New task</p>
             <TaskForm onAdd={handleAdd} />
           </div>
         </div>
