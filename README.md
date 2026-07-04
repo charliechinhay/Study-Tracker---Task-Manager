@@ -2,11 +2,6 @@
 
 A full-stack task management application designed for students, featuring drag-and-drop organization, priority levels, study categories, statistics dashboard, and more.
 
-![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)
-![Node.js](https://img.shields.io/badge/Node.js-Express-339933?logo=node.js)
-![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?logo=mongodb)
-![JWT](https://img.shields.io/badge/Auth-JWT-black)
-
 **🔑 Demo Account:** Click "Try Demo Account" on login page
 
 ---
