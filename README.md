@@ -6,6 +6,31 @@ A full-stack task management application designed for students, featuring drag-a
 
 ---
 
+# 📸 Application Preview
+
+## 🚀 Welcome Dashboard
+
+The landing page introduces the application and allows users to sign in, create an account, or access the app with a demo account.
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/c00828b7-2499-4da1-8e1b-b4eb6e712f1e" alt="Study Tracker Welcome Dashboard" width="100%">
+</p>
+
+---
+
+## 📊 Main Dashboard
+
+After authentication, users can manage their study tasks, monitor progress through interactive charts, filter tasks, organize them with drag & drop, and export data as CSV.
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4f48ed69-16c3-4e04-ae62-920f87c014d7" alt="Study Tracker Main Dashboard" width="100%">
+</p>
+
+---
+
+
+
+
 ## ✨ Features
 
 ### Core Functionality
