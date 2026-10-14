@@ -11,7 +11,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "study-tracker",
+    folder: process.env.CLOUDINARY_FOLDER || "study-tracker",
     allowed_formats: ["jpg", "jpeg", "png", "webp"],
   },
 });
