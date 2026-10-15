@@ -10,15 +10,23 @@ const app = express();
 
 const allowedOrigins = [
   process.env.CLIENT_URL,
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "https://study-tracker-task-manager.vercel.app",
-];
+  ...(process.env.CORS_ORIGINS || "").split(","),
+]
+
+  .map((o) => o?.trim())
+  .filter(Boolean);
+
+const previewPattern = process.env.CORS_PREVIEW_PATTERN
+  ? new RegExp(process.env.CORS_PREVIEW_PATTERN)
+  : null;
+
+const isAllowedOrigin = (origin) =>
+  allowedOrigins.includes(origin) || (previewPattern?.test(origin) ?? false);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || isAllowedOrigin(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
