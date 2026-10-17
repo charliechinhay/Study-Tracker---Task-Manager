@@ -8,9 +8,16 @@ vi.mock("react-router-dom", () => ({
 
 vi.mock("framer-motion", () => ({
   motion: {
-    div: ({ children, className }) => <div className={className}>{children}</div>,
+    div: ({ children, className }) => (
+      <div className={className}>{children}</div>
+    ),
     button: ({ children, className, onClick, disabled, title }) => (
-      <button className={className} onClick={onClick} disabled={disabled} title={title}>
+      <button
+        className={className}
+        onClick={onClick}
+        disabled={disabled}
+        title={title}
+      >
         {children}
       </button>
     ),
@@ -33,37 +40,63 @@ const baseTask = {
 describe("TaskCard", () => {
   it("renders the task title", () => {
     render(
-      <TaskCard task={baseTask} onDelete={vi.fn()} onToggle={vi.fn()} onEdit={vi.fn()} />,
+      <TaskCard
+        task={baseTask}
+        onDelete={vi.fn()}
+        onToggle={vi.fn()}
+        onEdit={vi.fn()}
+      />,
     );
     expect(screen.getByText("Study React")).toBeInTheDocument();
   });
 
   it("renders the priority badge", () => {
     render(
-      <TaskCard task={baseTask} onDelete={vi.fn()} onToggle={vi.fn()} onEdit={vi.fn()} />,
+      <TaskCard
+        task={baseTask}
+        onDelete={vi.fn()}
+        onToggle={vi.fn()}
+        onEdit={vi.fn()}
+      />,
     );
     expect(screen.getByText("high")).toBeInTheDocument();
   });
 
   it("renders the task description", () => {
     render(
-      <TaskCard task={baseTask} onDelete={vi.fn()} onToggle={vi.fn()} onEdit={vi.fn()} />,
+      <TaskCard
+        task={baseTask}
+        onDelete={vi.fn()}
+        onToggle={vi.fn()}
+        onEdit={vi.fn()}
+      />,
     );
     expect(screen.getByText("Learn hooks")).toBeInTheDocument();
   });
 
-  it("truncates descriptions longer than 60 characters", () => {
-    const task = { ...baseTask, description: "A".repeat(80) };
+  it("renders long descriptions in full", () => {
+    const description = "A".repeat(80);
+    const task = { ...baseTask, description };
     render(
-      <TaskCard task={task} onDelete={vi.fn()} onToggle={vi.fn()} onEdit={vi.fn()} />,
+      <TaskCard
+        task={task}
+        onDelete={vi.fn()}
+        onToggle={vi.fn()}
+        onEdit={vi.fn()}
+      />,
     );
-    expect(screen.getByText(`${"A".repeat(60)}...`)).toBeInTheDocument();
+    expect(screen.getByText(description)).toBeInTheDocument();
   });
 
   it("calls onDelete with the task id when delete button is clicked", () => {
     const onDelete = vi.fn();
     render(
-      <TaskCard task={baseTask} onDelete={onDelete} onToggle={vi.fn()} onEdit={vi.fn()} />,
+      <TaskCard
+        task={baseTask}
+        onDelete={onDelete}
+        onToggle={vi.fn()}
+        onEdit={vi.fn()}
+      />,
     );
     fireEvent.click(screen.getByTitle("Delete task"));
     expect(onDelete).toHaveBeenCalledWith("task-1");
@@ -72,7 +105,12 @@ describe("TaskCard", () => {
   it("calls onToggle with the task when complete button is clicked", () => {
     const onToggle = vi.fn();
     render(
-      <TaskCard task={baseTask} onDelete={vi.fn()} onToggle={onToggle} onEdit={vi.fn()} />,
+      <TaskCard
+        task={baseTask}
+        onDelete={vi.fn()}
+        onToggle={onToggle}
+        onEdit={vi.fn()}
+      />,
     );
     fireEvent.click(screen.getByTitle("Mark as done"));
     expect(onToggle).toHaveBeenCalledWith(baseTask);
@@ -81,7 +119,12 @@ describe("TaskCard", () => {
   it("calls onEdit with the task when edit button is clicked", () => {
     const onEdit = vi.fn();
     render(
-      <TaskCard task={baseTask} onDelete={vi.fn()} onToggle={vi.fn()} onEdit={onEdit} />,
+      <TaskCard
+        task={baseTask}
+        onDelete={vi.fn()}
+        onToggle={vi.fn()}
+        onEdit={onEdit}
+      />,
     );
     fireEvent.click(screen.getByTitle("Edit task"));
     expect(onEdit).toHaveBeenCalledWith(baseTask);
@@ -90,15 +133,27 @@ describe("TaskCard", () => {
   it("shows strikethrough style for completed tasks", () => {
     const task = { ...baseTask, completed: true };
     render(
-      <TaskCard task={task} onDelete={vi.fn()} onToggle={vi.fn()} onEdit={vi.fn()} />,
+      <TaskCard
+        task={task}
+        onDelete={vi.fn()}
+        onToggle={vi.fn()}
+        onEdit={vi.fn()}
+      />,
     );
-    expect(screen.getByText("Study React")).toHaveClass("text-decoration-line-through");
+    expect(screen.getByText("Study React")).toHaveClass(
+      "text-decoration-line-through",
+    );
   });
 
   it("shows 'Mark as active' button for completed tasks", () => {
     const task = { ...baseTask, completed: true };
     render(
-      <TaskCard task={task} onDelete={vi.fn()} onToggle={vi.fn()} onEdit={vi.fn()} />,
+      <TaskCard
+        task={task}
+        onDelete={vi.fn()}
+        onToggle={vi.fn()}
+        onEdit={vi.fn()}
+      />,
     );
     expect(screen.getByTitle("Mark as active")).toBeInTheDocument();
   });

@@ -5,7 +5,9 @@ import { MemoryRouter } from "react-router-dom";
 
 vi.mock("framer-motion", () => ({
   motion: {
-    div: ({ children, className }) => <div className={className}>{children}</div>,
+    div: ({ children, className }) => (
+      <div className={className}>{children}</div>
+    ),
   },
 }));
 
@@ -73,7 +75,7 @@ describe("Login page", () => {
         <Login />
       </MemoryRouter>,
     );
-    expect(screen.getByText("🚀 Try Demo Account")).toBeInTheDocument();
+    expect(screen.getByText("🚀 Try demo account")).toBeInTheDocument();
   });
 
   it("renders link to register page", () => {
