@@ -1,5 +1,6 @@
 import "./editTaskModal.css";
 import { useRef, useState } from "react";
+import { CATEGORIES, PRIORITIES } from "../../constants/tasks.js";
 
 function EditTaskModal({ task, onSave, onClose }) {
   const [title, setTitle] = useState(task.title);
@@ -78,9 +79,11 @@ function EditTaskModal({ task, onSave, onClose }) {
                     value={priority}
                     onChange={(e) => setPriority(e.target.value)}
                   >
-                    <option value="low">🟢 Low</option>
-                    <option value="medium">🟡 Medium</option>
-                    <option value="high">🔴 High</option>
+                    {PRIORITIES.map(({ value, label }) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="col-6">
@@ -101,16 +104,11 @@ function EditTaskModal({ task, onSave, onClose }) {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
-                  <option value="math">📐 Math</option>
-                  <option value="science">🔬 Science</option>
-                  <option value="language">🗣️ Language</option>
-                  <option value="history">📜 History</option>
-                  <option value="programming">💻 Programming</option>
-                  <option value="literature">📚 Literature</option>
-                  <option value="assignment">📝 Assignment</option>
-                  <option value="exam">📖 Exam</option>
-                  <option value="project">🎯 Project</option>
-                  <option value="other">🔷 Other</option>
+                  {CATEGORIES.map(({ value, label }) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
                 </select>
               </div>
 

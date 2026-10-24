@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { apiRequest } from "../../services/api";
 import TaskCard from "../../components/taskCard/TaskCard";
 import TaskForm from "../../components/taskForm/TaskForm";
+import { CATEGORIES } from "../../constants/tasks.js";
 import Statistics from "../../components/statistics/Statistics";
 import EditTaskModal from "../../components/editTaskModal/EditTaskModal";
 import TaskCardSkeleton from "../../components/taskCardSkeleton/TaskCardSkeleton";
@@ -55,7 +56,10 @@ function Dashboard() {
 
   const handleAdd = async (formData) => {
     try {
-      const newTask = await apiRequest("tasks", { method: "POST", body: formData });
+      const newTask = await apiRequest("tasks", {
+        method: "POST",
+        body: formData,
+      });
       setTasks((prev) => [...prev, newTask]);
       toast.success("Task added!");
     } catch {
@@ -79,7 +83,9 @@ function Dashboard() {
         method: "PATCH",
         body: JSON.stringify({ completed: !task.completed }),
       });
-      setTasks((prev) => prev.map((t) => (t._id === updated._id ? updated : t)));
+      setTasks((prev) =>
+        prev.map((t) => (t._id === updated._id ? updated : t)),
+      );
       toast.success(updated.completed ? "Task completed!" : "Task reopened.");
     } catch {
       toast.error("Failed to update task.");
@@ -145,7 +151,9 @@ function Dashboard() {
           <div
             className="progress-bar bg-primary dashboard-progress-bar"
             role="progressbar"
-            style={{ "--progress-width": `${(completedCount / totalCount) * 100}%` }}
+            style={{
+              "--progress-width": `${(completedCount / totalCount) * 100}%`,
+            }}
             aria-valuenow={(completedCount / totalCount) * 100}
             aria-valuemin={0}
             aria-valuemax={100}
@@ -156,7 +164,11 @@ function Dashboard() {
       {error && (
         <div className="alert alert-danger alert-dismissible py-2 small mb-3 dashboard-alert">
           {error}
-          <button type="button" className="btn-close btn-close-sm" onClick={() => setError("")} />
+          <button
+            type="button"
+            className="btn-close btn-close-sm"
+            onClick={() => setError("")}
+          />
         </div>
       )}
 
@@ -195,16 +207,11 @@ function Dashboard() {
               onChange={(e) => setCategoryFilter(e.target.value)}
             >
               <option value="all">All categories</option>
-              <option value="math">📐 Math</option>
-              <option value="science">🔬 Science</option>
-              <option value="language">🗣️ Language</option>
-              <option value="history">📜 History</option>
-              <option value="programming">💻 Programming</option>
-              <option value="literature">📚 Literature</option>
-              <option value="assignment">📝 Assignment</option>
-              <option value="exam">📖 Exam</option>
-              <option value="project">🎯 Project</option>
-              <option value="other">🔷 Other</option>
+              {CATEGORIES.map(({ value, label }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -251,8 +258,12 @@ function Dashboard() {
               collisionDetection={closestCenter}
               onDragEnd={({ active, over }) => {
                 if (!over || active.id === over.id) return;
-                const oldIndex = filteredTasks.findIndex((t) => t._id === active.id);
-                const newIndex = filteredTasks.findIndex((t) => t._id === over.id);
+                const oldIndex = filteredTasks.findIndex(
+                  (t) => t._id === active.id,
+                );
+                const newIndex = filteredTasks.findIndex(
+                  (t) => t._id === over.id,
+                );
                 const reordered = arrayMove(filteredTasks, oldIndex, newIndex);
 
                 setTasks((prev) => {
@@ -264,7 +275,9 @@ function Dashboard() {
 
                 apiRequest("tasks", {
                   method: "PATCH",
-                  body: JSON.stringify({ tasks: reordered.map((t) => ({ _id: t._id })) }),
+                  body: JSON.stringify({
+                    tasks: reordered.map((t) => ({ _id: t._id })),
+                  }),
                 }).catch(() => toast.error("Failed to reorder tasks."));
               }}
             >
