@@ -1,19 +1,7 @@
 import "./taskCard.css";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-
-const categoryLabels = {
-  math: "📐 Math",
-  science: "🔬 Science",
-  language: "🗣️ Language",
-  history: "📜 History",
-  programming: "💻 Programming",
-  literature: "📚 Literature",
-  assignment: "📝 Assignment",
-  exam: "📖 Exam",
-  project: "🎯 Project",
-  other: "🔷 Other",
-};
+import { CATEGORY_LABELS } from "../../constants/tasks.js";
 
 function TaskCard({ task, onDelete, onToggle, onEdit, dragHandleProps }) {
   const navigate = useNavigate();
@@ -45,7 +33,11 @@ function TaskCard({ task, onDelete, onToggle, onEdit, dragHandleProps }) {
         <div className="card-body py-2 px-3">
           <div className="d-flex align-items-start gap-2">
             {dragHandleProps && (
-              <div {...dragHandleProps} className="drag-handle mt-1" title="Drag to reorder">
+              <div
+                {...dragHandleProps}
+                className="drag-handle mt-1"
+                title="Drag to reorder"
+              >
                 <i className="bi bi-grip-vertical" />
               </div>
             )}
@@ -54,7 +46,9 @@ function TaskCard({ task, onDelete, onToggle, onEdit, dragHandleProps }) {
               <div className="d-flex align-items-start justify-content-between gap-2">
                 <p
                   className={`task-title ${
-                    task.completed ? "text-decoration-line-through text-muted" : ""
+                    task.completed
+                      ? "text-decoration-line-through text-muted"
+                      : ""
                   }`}
                 >
                   {task.title}
@@ -75,7 +69,9 @@ function TaskCard({ task, onDelete, onToggle, onEdit, dragHandleProps }) {
                     onClick={() => onToggle(task)}
                     title={task.completed ? "Mark as active" : "Mark as done"}
                   >
-                    <i className={`bi bi-${task.completed ? "arrow-counterclockwise" : "check2"}`} />
+                    <i
+                      className={`bi bi-${task.completed ? "arrow-counterclockwise" : "check2"}`}
+                    />
                   </button>
                   <button
                     className="task-action-btn"
@@ -101,14 +97,18 @@ function TaskCard({ task, onDelete, onToggle, onEdit, dragHandleProps }) {
               )}
 
               <div className="task-badges">
-                <span className={`task-badge task-badge-priority-${task.priority}`}>
+                <span
+                  className={`task-badge task-badge-priority-${task.priority}`}
+                >
                   {task.priority}
                 </span>
                 <span className="task-badge task-badge-category">
-                  {categoryLabels[task.category]}
+                  {CATEGORY_LABELS[task.category]}
                 </span>
                 {task.dueDate && (
-                  <span className={`task-badge ${isOverdue ? "task-badge-overdue" : "task-badge-date"}`}>
+                  <span
+                    className={`task-badge ${isOverdue ? "task-badge-overdue" : "task-badge-date"}`}
+                  >
                     <i className="bi bi-calendar3" />
                     {new Date(task.dueDate).toLocaleDateString("en-US", {
                       month: "short",

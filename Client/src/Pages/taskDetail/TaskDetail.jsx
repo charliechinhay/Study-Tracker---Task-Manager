@@ -2,20 +2,8 @@ import "./taskDetail.css";
 import { useEffect, useState } from "react";
 import { apiRequest } from "../../services/api";
 import { useParams, useNavigate } from "react-router-dom";
+import { CATEGORY_LABELS } from "../../constants/tasks.js";
 import TaskDetailSkeleton from "../../components/taskDetailSkeleton/TaskDetailSkeleton";
-
-const categoryLabels = {
-  math: "📐 Math",
-  science: "🔬 Science",
-  language: "🗣️ Language",
-  history: "📜 History",
-  programming: "💻 Programming",
-  literature: "📚 Literature",
-  assignment: "📝 Assignment",
-  exam: "📖 Exam",
-  project: "🎯 Project",
-  other: "🔷 Other",
-};
 
 function TaskDetails() {
   const { id } = useParams();
@@ -71,7 +59,9 @@ function TaskDetails() {
             <div className="d-flex align-items-start justify-content-between gap-3 mb-3">
               <h1
                 className={`task-detail-title fw-bold mb-0 ${
-                  task.completed ? "text-decoration-line-through text-muted" : ""
+                  task.completed
+                    ? "text-decoration-line-through text-muted"
+                    : ""
                 }`}
               >
                 {task.title}
@@ -80,12 +70,16 @@ function TaskDetails() {
 
             {/* Status badges */}
             <div className="d-flex flex-wrap gap-2 mb-4">
-              <span className={`detail-badge ${task.completed ? "detail-badge-done" : "detail-badge-active"}`}>
-                <i className={`bi bi-${task.completed ? "check2-circle" : "clock"}`} />
+              <span
+                className={`detail-badge ${task.completed ? "detail-badge-done" : "detail-badge-active"}`}
+              >
+                <i
+                  className={`bi bi-${task.completed ? "check2-circle" : "clock"}`}
+                />
                 {task.completed ? "Completed" : "Active"}
               </span>
               <span className="detail-badge detail-badge-category">
-                {categoryLabels[task.category]}
+                {CATEGORY_LABELS[task.category]}
               </span>
               {isOverdue && (
                 <span className="detail-badge detail-badge-overdue">
@@ -97,21 +91,30 @@ function TaskDetails() {
 
             {task.description && (
               <div className="mb-4">
-                <p className="detail-section-label text-muted fw-medium">Description</p>
+                <p className="detail-section-label text-muted fw-medium">
+                  Description
+                </p>
                 <p className="detail-description">{task.description}</p>
               </div>
             )}
 
             {/* Meta */}
             <div>
-              <p className="detail-section-label text-muted fw-medium">Details</p>
+              <p className="detail-section-label text-muted fw-medium">
+                Details
+              </p>
               <div className="detail-meta-container">
                 {task.dueDate && (
                   <div className="detail-meta-row">
                     <span className="detail-meta-key text-muted">Due date</span>
-                    <span className={`detail-meta-value ${isOverdue ? "text-danger" : ""}`}>
+                    <span
+                      className={`detail-meta-value ${isOverdue ? "text-danger" : ""}`}
+                    >
                       {new Date(task.dueDate).toLocaleDateString("en-US", {
-                        weekday: "short", month: "short", day: "numeric", year: "numeric",
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
                       })}
                     </span>
                   </div>
@@ -126,15 +129,21 @@ function TaskDetails() {
                   <span className="detail-meta-key text-muted">Created</span>
                   <span className="detail-meta-value">
                     {new Date(task.createdAt).toLocaleDateString("en-US", {
-                      month: "short", day: "numeric", year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
                     })}
                   </span>
                 </div>
                 <div className="detail-meta-row">
-                  <span className="detail-meta-key text-muted">Last updated</span>
+                  <span className="detail-meta-key text-muted">
+                    Last updated
+                  </span>
                   <span className="detail-meta-value">
                     {new Date(task.updatedAt).toLocaleDateString("en-US", {
-                      month: "short", day: "numeric", year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
                     })}
                   </span>
                 </div>

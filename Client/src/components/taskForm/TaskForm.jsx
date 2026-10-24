@@ -1,5 +1,6 @@
 import "./taskForm.css";
 import { useRef, useState } from "react";
+import { CATEGORIES, PRIORITIES } from "../../constants/tasks.js";
 
 function TaskForm({ onAdd }) {
   const [title, setTitle] = useState("");
@@ -79,25 +80,22 @@ function TaskForm({ onAdd }) {
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
               >
-                <option value="low">🟢 Low</option>
-                <option value="medium">🟡 Medium</option>
-                <option value="high">🔴 High</option>
+                {PRIORITIES.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
               </select>
               <select
                 className="form-select task-form-select"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
-                <option value="math">📐 Math</option>
-                <option value="science">🔬 Science</option>
-                <option value="language">🗣️ Language</option>
-                <option value="history">📜 History</option>
-                <option value="programming">💻 Programming</option>
-                <option value="literature">📚 Literature</option>
-                <option value="assignment">📝 Assignment</option>
-                <option value="exam">📖 Exam</option>
-                <option value="project">🎯 Project</option>
-                <option value="other">🔷 Other</option>
+                {CATEGORIES.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
               </select>
               <input
                 type="date"
