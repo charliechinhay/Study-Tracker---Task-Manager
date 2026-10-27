@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { PRIORITIES, CATEGORIES } from "../constants/tasks.js";
 
 const taskSchema = new mongoose.Schema(
   {
@@ -7,23 +8,12 @@ const taskSchema = new mongoose.Schema(
     description: { type: String, default: "" },
     priority: {
       type: String,
-      enum: ["low", "medium", "high"],
+      enum: PRIORITIES,
       default: "medium",
     },
     category: {
       type: String,
-      enum: [
-        "math",
-        "science",
-        "language",
-        "history",
-        "programming",
-        "literature",
-        "assignment",
-        "exam",
-        "project",
-        "other",
-      ],
+      enum: CATEGORIES,
       default: "other",
     },
     dueDate: { type: Date, default: null },
