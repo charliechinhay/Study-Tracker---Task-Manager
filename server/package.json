@@ -30,6 +30,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
-    "resend": "^6.12.3"
+    "resend": "^6.12.3",
+    "zod": "^4.6.7"
   }
 }

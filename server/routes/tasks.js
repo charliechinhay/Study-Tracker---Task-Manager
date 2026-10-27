@@ -1,8 +1,15 @@
 import express from "express";
 import Task from "../models/Task.js";
 import auth from "../middleware/auth.js";
+import validate from "../middleware/validate.js";
+import validateObjectId from "../middleware/validateObjectId.js";
 import { upload } from "../config/cloudinary.js";
 import cloudinary from "../config/cloudinary.js";
+import{
+  createTaskSchema,
+  updateTaskSchema,
+  reorderTasksSchema
+} from "../validation/taskSchemas.js";
 
 const router = express.Router();
 
@@ -20,7 +27,7 @@ router.get("/", auth, async (req, res) => {
 });
 
 //GET /api/tasks/:id - get one task
-router.get("/:id", auth, async (req, res) => {
+router.get("/:id", auth, validateObjectId, async (req, res) => {
   try {
     const task = await Task.findOne({
       _id: req.params.id,
@@ -37,21 +44,11 @@ router.get("/:id", auth, async (req, res) => {
 });
 
 //POST / api / tasks - create a new task
-router.post("/", auth, upload.single("image"), async (req, res) => {
+router.post("/", auth, upload.single("image"),validate(createTaskSchema), async (req, res) => {
   try {
-    const { title, description, priority, category, dueDate } = req.body;
-
-    if (!title) {
-      return res.status(400).json({ message: "Title is required" });
-    }
-
     const task = await Task.create({
+      ...req.body,
       user: req.user.id,
-      title,
-      description,
-      priority,
-      category,
-      dueDate,
       image: req.file
         ? { url: req.file.path, publicId: req.file.filename }
         : { url: null, publicId: null },
@@ -63,35 +60,20 @@ router.post("/", auth, upload.single("image"), async (req, res) => {
 });
 
 // PATCH /api/tasks/:id - update a task
-router.patch("/:id", auth, upload.single("image"), async (req, res) => {
+router.patch("/:id", auth, validateObjectId, upload.single("image"), validate(updateTaskSchema), async (req, res) => {
   try {
-    const task = await Task.findOneAndUpdate(
-      { _id: req.params.id, user: req.user.id },
-      { $set: req.body },
-      { new: true, runValidators: true },
-    );
+    const task = await Task.findOne({
+      _id: req.params.id,
+      user: req.user.id,
+    });
 
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
     }
+  
+    //req.body contiene solo i campi validati e già convertiti grazie a validate middleware
 
-    const {
-      title,
-      description,
-      completed,
-      priority,
-      category,
-      dueDate,
-      order,
-    } = req.body;
-
-    if (title !== undefined) task.title = title;
-    if (description !== undefined) task.description = description;
-    if (completed !== undefined) task.completed = completed;
-    if (priority !== undefined) task.priority = priority;
-    if (category !== undefined) task.category = category;
-    if (dueDate !== undefined) task.dueDate = dueDate;
-    if (order !== undefined) task.order = order;
+    Object.assign(task, req.body);
 
     if (req.file) {
       if (task.image.publicId) {
@@ -108,8 +90,8 @@ router.patch("/:id", auth, upload.single("image"), async (req, res) => {
   }
 });
 
-// PATCH /api/tasks/reorder - reorder tasks
-router.patch("/", auth, async (req, res) => {
+// PATCH /api/tasks/ - reorder tasks
+router.patch("/", auth, validate(reorderTasksSchema), async (req, res) => {
   try {
     const { tasks } = req.body;
 
@@ -128,7 +110,7 @@ router.patch("/", auth, async (req, res) => {
 });
 
 // DELETE /api/tasks/:id  - delete a task
-router.delete("/:id", auth, async (req, res) => {
+router.delete("/:id", auth, validateObjectId, async (req, res) => {
   try {
     const task = await Task.findOneAndDelete({
       _id: req.params.id,
