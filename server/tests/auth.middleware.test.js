@@ -1,8 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import jwt from "jsonwebtoken";
 import auth from "../middleware/auth.js";
+import AppError from "../utils/AppError.js";
 
 const SECRET = "test-jwt-secret-key";
+
+const expectAuthError = (next,message) => {
+  expect(next).toHaveBeenCalledTimes(1);
+  const err = next.mock.calls[0][0];
+  expect(err).toBeInstanceOf(AppError);
+  expect(err.status).toBe(401);
+  if(message) expect(err.message).toBe(message);
+}
+
+
 
 describe("auth middleware", () => {
   let req, res, next;
@@ -19,31 +30,27 @@ describe("auth middleware", () => {
 
   it("rejects request with no authorization header", () => {
     auth(req, res, next);
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ message: "No token, access denied" });
-    expect(next).not.toHaveBeenCalled();
+    expectAuthError(next, "No token, access denied");
+    expect(res.status).not.toHaveBeenCalled();
   });
 
   it("rejects request with malformed authorization header", () => {
     req.headers.authorization = "InvalidHeader";
     auth(req, res, next);
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(next).not.toHaveBeenCalled();
+    expectAuthError(next);
   });
 
   it("rejects request with invalid token", () => {
     req.headers.authorization = "Bearer invalidtoken123";
     auth(req, res, next);
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ message: "Token is not valid" });
-    expect(next).not.toHaveBeenCalled();
+    expectAuthError(next, "Token is not valid");
   });
 
   it("calls next and sets req.user for valid token", () => {
     const token = jwt.sign({ id: "user123" }, SECRET, { expiresIn: "1h" });
     req.headers.authorization = `Bearer ${token}`;
     auth(req, res, next);
-    expect(next).toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith();
     expect(req.user).toMatchObject({ id: "user123" });
   });
 
@@ -51,7 +58,6 @@ describe("auth middleware", () => {
     const token = jwt.sign({ id: "user123" }, SECRET, { expiresIn: "-1s" });
     req.headers.authorization = `Bearer ${token}`;
     auth(req, res, next);
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(next).not.toHaveBeenCalled();
+    expectAuthError(next, "Token is not valid");
   });
 });
