@@ -32,7 +32,7 @@ router.get("/:id", auth, validateObjectId, async (req, res) => {
     });
 
     if (!task) {
-      throw new AppError(404, "Task not found");
+      throw new AppError(404, "Task not found", "TASK_NOT_FOUND");
     }
     res.json(task);
 });
