@@ -146,4 +146,24 @@ describe("POST /api/auth/demo", () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("token");
   });
+
 });
+
+
+describe("Auth error handling", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("does not leak internal error details on login", async () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    User.findOne.mockRejectedValueOnce(new Error("mongo connection string leaked"));
+
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send({ email: "test@example.com", password: "pass" });
+
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({ message: "Server error", code: "INTERNAL_ERROR" });
+    spy.mockRestore();
+  });
+});
+
