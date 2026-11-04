@@ -31,7 +31,7 @@ app.use(
       if (!origin || isAllowedOrigin(origin)) {
         callback(null, true);
       } else {
-        callback(new AppError(403, "Origin not allowed", "CORS_NOT_ALLOWED_ERROR"));
+        callback(new AppError(403, "Origin not allowed", "CORS_NOT_ALLOWED"));
       }
     },
     credentials: true,

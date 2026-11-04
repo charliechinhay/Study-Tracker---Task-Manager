@@ -332,7 +332,7 @@ describe("Validation and Security", () => {
       .get("/api/tasks")
       .set("Origin", "https://evil.example.com");
     expect(res.status).toBe(403);
-    expect(res.body.code).toBe("CORS_NOT_ALLOWED_ERROR");
+    expect(res.body.code).toBe("CORS_NOT_ALLOWED");
   });
 
   it("lets allowed origins through CORS", async () => {
