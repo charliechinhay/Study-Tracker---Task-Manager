@@ -306,4 +306,62 @@ describe("Validation and Security", () => {
       },
     ]);
   });
+
+  describe("Error handling", () => {
+  const auth = () => ({ Authorization: `Bearer ${authToken}` });
+
+  it("responds 404 in JSON for unknown routes", async () => {
+    const res = await request(app).get("/api/does-not-exist");
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ message: "Route not found", code: "NOT_FOUND" });
+  });
+  });
+
+    it("responds 400 for malformed JSON body", async () => {
+    const res = await request(app)
+      .post("/api/tasks")
+      .set(auth())
+      .set("Content-Type", "application/json")
+      .send('{"title":');
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe("INVALID_JSON");
+  });
+
+  it("responds 403 for origins not allowed by CORS", async () => {
+    const res = await request(app)
+      .get("/api/tasks")
+      .set("Origin", "https://evil.example.com");
+    expect(res.status).toBe(403);
+    expect(res.body.code).toBe("CORS_NOT_ALLOWED_ERROR");
+  });
+
+  it("lets allowed origins through CORS", async () => {
+    const res = await request(app)
+      .get("/api/tasks")
+      .set("Origin", "http://localhost:5173");
+    expect(res.status).toBe(401);
+    expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:5173");
+  });
+
+  it("returns validation errors with code and field list", async () => {
+    const res = await request(app).post("/api/tasks").set(auth()).send({});
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe("VALIDATION_ERROR");
+    expect(res.body.errors[0]).toMatchObject({ field: "title" });
+  });
+
+  it("hides internal error details from the client", async () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    Task.find.mockReturnValueOnce({
+      sort: vi.fn().mockRejectedValueOnce(new Error("secret db detail")),
+    });
+
+    const res = await request(app).get("/api/tasks").set(auth());
+
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({ message: "Server error", code: "INTERNAL_ERROR" });
+    expect(JSON.stringify(res.body)).not.toContain("secret");
+    spy.mockRestore();
+  });
+
 });

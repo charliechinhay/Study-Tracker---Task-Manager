@@ -5,6 +5,8 @@ import session from "express-session";
 import authRoutes from "./routes/auth.js";
 import taskRoutes from "./routes/tasks.js";
 import passport from "./config/passport.js";
+import { notFound, errorHandler } from "./middleware/errorHandler.js";
+import AppError from "./utils/AppError.js";
 
 const app = express();
 
@@ -29,7 +31,7 @@ app.use(
       if (!origin || isAllowedOrigin(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new AppError(403, "Origin not allowed", "CORS_NOT_ALLOWED_ERROR"));
       }
     },
     credentials: true,
@@ -47,5 +49,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
-
+app.use(notFound);
+app.use(errorHandler);
 export default app;
