@@ -55,6 +55,19 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
+
+// ⚠️ TEMPORANEO - solo staging, da rimuovere subito dopo la verifica
+app.get("/api/debug/ip", (req, res) => {
+  res.json({
+    trustProxy: app.get("trust proxy"),
+    ip: req.ip,
+    xForwardedFor: req.headers["x-forwarded-for"],
+    cfConnectingIp: req.headers["cf-connecting-ip"],
+    trueClientIp: req.headers["true-client-ip"],
+    socket: req.socket.remoteAddress,
+  });
+});
+
 app.use(notFound);
 app.use(errorHandler);
 export default app;
