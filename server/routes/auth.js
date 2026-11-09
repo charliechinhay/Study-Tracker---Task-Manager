@@ -6,11 +6,12 @@ import auth from "../middleware/auth.js";
 import passport from "../config/passport.js";
 import { sendWelcomeEmail } from "../config/resend.js";
 import AppError from "../utils/AppError.js";
+import {loginLimiter, signupLimiter} from "../middleware/rateLimit.js";
 
 const router = express.Router();
 
 // post / api/ auth/ register
-router.post("/register", async (req, res) => {
+router.post("/register", signupLimiter, async (req, res) => {
     const { email, password } = req.body ?? {};
 
     if (!email || !password) {
@@ -39,7 +40,7 @@ router.post("/register", async (req, res) => {
 });
 
 // post / api/ auth/ login
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -96,7 +97,7 @@ router.get("/me", auth, async (req, res) => {
 });
 
 //post /api/auth/demo
-router.post("/demo", async (req, res) => {
+router.post("/demo",  signupLimiter, async (req, res) => {
     let demoUser = await User.findOne({ email: "demo@studytracker.com" });
     if (!demoUser) {
       const hashedPassword = await bcrypt.hash("demo123", 10);
