@@ -11,7 +11,7 @@ import AppError from "./utils/AppError.js";
 import {apiLimiter} from "./middleware/rateLimit.js";
 
 const app = express();
-app.set("trust proxy", 1);
+app.set("trust proxy", Number(process.env.TRUST_PROXY_HOPS ?? 1));
 app.use(helmet());
 
 
