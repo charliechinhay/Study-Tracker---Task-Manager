@@ -3,8 +3,8 @@ import Task from "../models/Task.js";
 import auth from "../middleware/auth.js";
 import validate from "../middleware/validate.js";
 import validateObjectId from "../middleware/validateObjectId.js";
-import { upload } from "../config/cloudinary.js";
-import cloudinary from "../config/cloudinary.js";
+import { upload } from "../middleware/upload.js";
+import { uploadImage, deleteImage } from "../config/cloudinary.js";
 import AppError from "../utils/AppError.js";
 import{
   createTaskSchema,
@@ -39,14 +39,17 @@ router.get("/:id", auth, validateObjectId, async (req, res) => {
 
 //POST / api / tasks - create a new task
 router.post("/", auth, upload.single("image"),validate(createTaskSchema), async (req, res) => {
-    const task = await Task.create({
-      ...req.body,
-      user: req.user.id,
-      image: req.file
-        ? { url: req.file.path, publicId: req.file.filename }
-        : { url: null, publicId: null },
-    });
-    res.status(201).json(task);
+       const image = req.file
+      ? await uploadImage(req.file)
+      : { url: null, publicId: null };
+
+    try {
+      const task = await Task.create({ ...req.body, user: req.user.id, image });
+      res.status(201).json(task);
+    } catch (err) {
+      await deleteImage(image.publicId);
+      throw err;
+    }
 });
 
 // PATCH /api/tasks/:id - update a task
@@ -64,14 +67,18 @@ router.patch("/:id", auth, validateObjectId, upload.single("image"), validate(up
 
     Object.assign(task, req.body);
 
+  const oldPublicId = task.image.publicId;
     if (req.file) {
-      if (task.image.publicId) {
-        await cloudinary.uploader.destroy(task.image.publicId);
-      }
-      task.image = { url: req.file.path, publicId: req.file.filename };
+      task.image = await uploadImage(req.file);
     }
 
-    await task.save();
+    try {
+      await task.save();
+    } catch (err) {
+      if (req.file) await deleteImage(task.image.publicId);
+      throw err;
+    }
+    if (req.file) await deleteImage(oldPublicId);
 
     res.json(task);
 });
@@ -102,9 +109,8 @@ router.delete("/:id", auth, validateObjectId, async (req, res) => {
       throw new AppError(404, "Task not found", "TASK_NOT_FOUND");
     }
 
-    if (task.image.publicId) {
-      await cloudinary.uploader.destroy(task.image.publicId);
-    }
+      await deleteImage(task.image.publicId);
+    
 
     res.json({ message: "Task deleted" });
 });

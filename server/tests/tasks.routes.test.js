@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeAll, beforeEach } from "vitest";
+import { uploadImage, deleteImage } from "../config/cloudinary.js";
 import request from "supertest";
 import jwt from "jsonwebtoken";
 
@@ -14,8 +15,20 @@ vi.mock("../config/passport.js", () => ({
 }));
 
 vi.mock("../config/cloudinary.js", () => ({
-  default: { uploader: { destroy: vi.fn().mockResolvedValue(undefined) } },
-  upload: { single: () => (req, res, next) => next() },
+  uploadImage: vi.fn(),
+  deleteImage: vi.fn(),
+}));
+
+// Simula multer: con l'header "x-test-image" la richiesta ha un file in memoria
+vi.mock("../middleware/upload.js", () => ({
+  upload: {
+    single: () => (req, res, next) => {
+      if (req.headers["x-test-image"]) {
+        req.file = { buffer: Buffer.from("fake-image"), mimetype: "image/png" };
+      }
+      next();
+    },
+  },
 }));
 
 vi.mock("../config/resend.js", () => ({
@@ -364,4 +377,117 @@ describe("Validation and Security", () => {
     spy.mockRestore();
   });
 
+});
+
+describe("Image upload", () => {
+  const auth = () => ({ Authorization: `Bearer ${authToken}` });
+  const withImage = () => ({ ...auth(), "x-test-image": "1" });
+  const NEW_IMAGE = { url: "https://res.cloudinary.com/new.png", publicId: "new-id" };
+
+  it("uploads the image only after validation, then creates the task", async () => {
+    uploadImage.mockResolvedValueOnce(NEW_IMAGE);
+    Task.create.mockResolvedValueOnce({ _id: TASK_ID, title: "With image" });
+
+    const res = await request(app)
+      .post("/api/tasks")
+      .set(withImage())
+      .send({ title: "With image" });
+
+    expect(res.status).toBe(201);
+    expect(uploadImage).toHaveBeenCalledTimes(1);
+    expect(Task.create).toHaveBeenCalledWith(
+      expect.objectContaining({ image: NEW_IMAGE, user: USER_ID }),
+    );
+  });
+
+  it("does not upload the image when the body is invalid", async () => {
+    const res = await request(app).post("/api/tasks").set(withImage()).send({});
+
+    expect(res.status).toBe(400);
+    expect(uploadImage).not.toHaveBeenCalled();
+  });
+
+  it("deletes the uploaded image if creating the task fails", async () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    uploadImage.mockResolvedValueOnce(NEW_IMAGE);
+    Task.create.mockRejectedValueOnce(new Error("db down"));
+
+    const res = await request(app)
+      .post("/api/tasks")
+      .set(withImage())
+      .send({ title: "With image" });
+
+    expect(res.status).toBe(500);
+    expect(deleteImage).toHaveBeenCalledWith("new-id");
+    spy.mockRestore();
+  });
+
+  it("does not upload the image when the task does not exist", async () => {
+    Task.findOne.mockResolvedValueOnce(null);
+
+    const res = await request(app)
+      .patch(`/api/tasks/${MISSING_ID}`)
+      .set(withImage())
+      .send({ title: "x" });
+
+    expect(res.status).toBe(404);
+    expect(uploadImage).not.toHaveBeenCalled();
+  });
+
+  it("replaces the image and deletes the old one only after saving", async () => {
+    uploadImage.mockResolvedValueOnce(NEW_IMAGE);
+    const task = {
+      _id: TASK_ID,
+      user: USER_ID,
+      image: { url: "https://res.cloudinary.com/old.png", publicId: "old-id" },
+      save: vi.fn().mockResolvedValue(undefined),
+    };
+    Task.findOne.mockResolvedValueOnce(task);
+
+    const res = await request(app)
+      .patch(`/api/tasks/${TASK_ID}`)
+      .set(withImage())
+      .send({ title: "Updated" });
+
+    expect(res.status).toBe(200);
+    expect(task.image).toEqual(NEW_IMAGE);
+    expect(deleteImage).toHaveBeenCalledWith("old-id");
+    expect(task.save.mock.invocationCallOrder[0]).toBeLessThan(
+      deleteImage.mock.invocationCallOrder[0],
+    );
+  });
+
+  it("keeps the old image and removes the new one if saving fails", async () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    uploadImage.mockResolvedValueOnce(NEW_IMAGE);
+    const task = {
+      _id: TASK_ID,
+      user: USER_ID,
+      image: { url: "https://res.cloudinary.com/old.png", publicId: "old-id" },
+      save: vi.fn().mockRejectedValue(new Error("db down")),
+    };
+    Task.findOne.mockResolvedValueOnce(task);
+
+    const res = await request(app)
+      .patch(`/api/tasks/${TASK_ID}`)
+      .set(withImage())
+      .send({ title: "Updated" });
+
+    expect(res.status).toBe(500);
+    expect(deleteImage).toHaveBeenCalledWith("new-id");
+    expect(deleteImage).not.toHaveBeenCalledWith("old-id");
+    spy.mockRestore();
+  });
+
+  it("deletes the image of a deleted task", async () => {
+    Task.findOneAndDelete.mockResolvedValueOnce({
+      _id: TASK_ID,
+      image: { url: "https://res.cloudinary.com/old.png", publicId: "old-id" },
+    });
+
+    const res = await request(app).delete(`/api/tasks/${TASK_ID}`).set(auth());
+
+    expect(res.status).toBe(200);
+    expect(deleteImage).toHaveBeenCalledWith("old-id");
+  });
 });
