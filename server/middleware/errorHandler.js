@@ -12,6 +12,9 @@ const toAppError = (err) => {
     return new AppError(413, "Request body too large", "PAYLOAD_TOO_LARGE");
   }
   if (err instanceof multer.MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return new AppError(413, "Image must be at most 2 MB", "FILE_TOO_LARGE");
+    }
     return new AppError(400, err.message, "UPLOAD_ERROR");
   }
   if (err instanceof mongoose.Error.ValidationError) {

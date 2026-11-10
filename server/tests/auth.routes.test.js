@@ -14,8 +14,8 @@ vi.mock("../config/passport.js", () => ({
 }));
 
 vi.mock("../config/cloudinary.js", () => ({
-  default: { uploader: { destroy: vi.fn() } },
-  upload: { single: () => (req, res, next) => next() },
+  uploadImage: vi.fn(),
+  deleteImage: vi.fn(),
 }));
 
 vi.mock("../config/resend.js", () => ({
