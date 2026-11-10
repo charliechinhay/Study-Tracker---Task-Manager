@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import multer from "multer";
-import AppError from "../server/utils/AppError.js";
+import AppError from "../utils/AppError.js";
 
 // translate known external library errors into AppError; null = unexpected error
 const toAppError = (err) => {
@@ -11,7 +11,7 @@ const toAppError = (err) => {
   if (err.type === "entity.too.large") {
     return new AppError(413, "Request body too large", "PAYLOAD_TOO_LARGE");
   }
-   if (err instanceof multer.MulterError) {
+  if (err instanceof multer.MulterError) {
     if (err.code === "LIMIT_FILE_SIZE") {
       return new AppError(413, "Image must be at most 2 MB", "FILE_TOO_LARGE");
     }

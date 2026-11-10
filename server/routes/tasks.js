@@ -5,7 +5,7 @@ import validate from "../middleware/validate.js";
 import validateObjectId from "../middleware/validateObjectId.js";
 import { upload } from "../middleware/upload.js";
 import { uploadImage, deleteImage } from "../config/cloudinary.js";
-import AppError from "../server/utils/AppError.js";
+import AppError from "../utils/AppError.js";
 import{
   createTaskSchema,
   updateTaskSchema,
