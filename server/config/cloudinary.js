@@ -18,7 +18,7 @@ export const uploadImage = (file)=>
   new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(uploadOptions, (error, result) => {
       if(error) return reject(error);
-      resolve({url: result.secure_url, publicID: result.public_id});
+      resolve({url: result.secure_url, publicId: result.public_id});
   })
   stream.end(file.buffer);
 });
