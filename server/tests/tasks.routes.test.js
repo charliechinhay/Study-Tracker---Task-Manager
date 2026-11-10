@@ -14,8 +14,20 @@ vi.mock("../config/passport.js", () => ({
 }));
 
 vi.mock("../config/cloudinary.js", () => ({
-  default: { uploader: { destroy: vi.fn().mockResolvedValue(undefined) } },
-  upload: { single: () => (req, res, next) => next() },
+  uploadImage: vi.fn(),
+  deleteImage: vi.fn(),
+}));
+
+// Simula multer: con l'header "x-test-image" la richiesta ha un file in memoria
+vi.mock("../middleware/upload.js", () => ({
+  upload: {
+    single: () => (req, res, next) => {
+      if (req.headers["x-test-image"]) {
+        req.file = { buffer: Buffer.from("fake-image"), mimetype: "image/png" };
+      }
+      next();
+    },
+  },
 }));
 
 vi.mock("../config/resend.js", () => ({

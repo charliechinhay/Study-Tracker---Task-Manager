@@ -1,6 +1,4 @@
-import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -8,13 +6,30 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: process.env.CLOUDINARY_FOLDER || "study-tracker",
-    allowed_formats: ["jpg", "jpeg", "png", "webp"],
-  },
+const uploadOptions = {
+  folder: process.env.CLOUDINARY_FOLDER || "study-tracker",
+  resource_type: "image",
+  allowed_formats: ["jpg", "jpeg", "png", "webp"],
+};
+
+
+//charge in cloudinary the file multer as in memory storage
+export const uploadImage = (file)=> 
+  new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(uploadOptions, (error, result) => {
+      if(error) return reject(error);
+      resolve({url: result.secure_url, publicID: result.public_id});
+  })
+  stream.end(file.buffer);
 });
 
-export const upload = multer({ storage });
-export default cloudinary;
+//delete "best effort": failed register log
+//but dont block the user operation
+export const deleteImage = async (publicId) => {
+  if (!publicId) return;
+  try {
+    await cloudinary.uploader.destroy(publicId);
+  } catch (err) {
+    console.error(`Failed to delete image ${publicId}:`, err);
+  }
+};
