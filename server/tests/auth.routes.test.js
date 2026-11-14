@@ -167,3 +167,87 @@ describe("Auth error handling", () => {
   });
 });
 
+
+describe("Auth input validation", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("rejects a password shorter than 8 characters on register", async () => {
+    const res = await request(app)
+      .post("/api/auth/register")
+      .send({ email: "new@example.com", password: "1234567" });
+
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe("VALIDATION_ERROR");
+    expect(res.body.errors).toEqual([
+      { field: "password", message: "Password must be at least 8 characters" },
+    ]);
+    expect(User.create).not.toHaveBeenCalled();
+  });
+
+  it("rejects an invalid email on register", async () => {
+    const res = await request(app)
+      .post("/api/auth/register")
+      .send({ email: "not-an-email", password: "password123" });
+
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe("VALIDATION_ERROR");
+    expect(res.body.errors[0].field).toBe("email");
+  });
+
+  it("saves the email trimmed and lowercase on register", async () => {
+    User.findOne.mockResolvedValueOnce(null);
+    User.create.mockResolvedValueOnce({ _id: "new-id" });
+
+    const res = await request(app)
+      .post("/api/auth/register")
+      .send({ email: "  New@Example.COM ", password: "password123" });
+
+    expect(res.status).toBe(201);
+    expect(User.findOne).toHaveBeenCalledWith({ email: "new@example.com" });
+    expect(User.create).toHaveBeenCalledWith(
+      expect.objectContaining({ email: "new@example.com" }),
+    );
+  });
+
+  it("returns VALIDATION_ERROR when login fields are missing", async () => {
+    const res = await request(app).post("/api/auth/login").send({});
+
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe("VALIDATION_ERROR");
+    expect(User.findOne).not.toHaveBeenCalled();
+  });
+
+  it("finds the user with a lowercase email on login", async () => {
+    const hashed = await bcrypt.hash("correctpass", 10);
+    User.findOne.mockResolvedValueOnce({ _id: "user-id", password: hashed });
+
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send({ email: "Test@Example.com", password: "correctpass" });
+
+    expect(res.status).toBe(200);
+    expect(User.findOne).toHaveBeenCalledWith({ email: "test@example.com" });
+  });
+
+  it("returns GOOGLE_LOGIN_REQUIRED for a Google-only account", async () => {
+    User.findOne.mockResolvedValueOnce({ email: "google@example.com", googleId: "g123", password: null });
+
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send({ email: "google@example.com", password: "whatever" });
+
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe("GOOGLE_LOGIN_REQUIRED");
+  });
+
+  it("returns 400 instead of 500 for a user without password", async () => {
+    User.findOne.mockResolvedValueOnce({ _id: "user-id", email: "nopass@example.com" });
+
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send({ email: "nopass@example.com", password: "whatever" });
+
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe("INVALID_CREDENTIALS");
+  });
+});

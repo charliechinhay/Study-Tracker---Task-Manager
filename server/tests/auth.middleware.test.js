@@ -40,6 +40,14 @@ describe("auth middleware", () => {
     expectAuthError(next);
   });
 
+    it("rejects a header without the space after Bearer", () => {
+    const token = jwt.sign({ id: "user123" }, SECRET, { expiresIn: "1h" });
+    req.headers.authorization = `Bearer${token}`;
+    auth(req, res, next);
+    expectAuthError(next, "No token, access denied");
+  });
+
+
   it("rejects request with invalid token", () => {
     req.headers.authorization = "Bearer invalidtoken123";
     auth(req, res, next);
