@@ -2,7 +2,6 @@ import "dotenv/config";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
-import session from "express-session";
 import authRoutes from "./routes/auth.js";
 import taskRoutes from "./routes/tasks.js";
 import passport from "./config/passport.js";
@@ -44,15 +43,7 @@ app.use(
 );
 app.use("/api", apiLimiter);
 app.use(express.json());
-app.use(
-  session({
-    secret: process.env.JWT_SECRET || "test-secret",
-    resave: false,
-    saveUninitialized: false,
-  }),
-);
 app.use(passport.initialize());
-app.use(passport.session());
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use(notFound);
