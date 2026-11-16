@@ -3,7 +3,7 @@ import AppError from "../utils/AppError.js";
 
 const auth = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer")) {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return next(new AppError(401, "No token, access denied", "NO_TOKEN"));
   }
 
