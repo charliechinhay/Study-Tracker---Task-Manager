@@ -1,4 +1,5 @@
 import express from "express";
+import { randomBytes } from "crypto";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
@@ -13,6 +14,7 @@ import { registerSchema, loginSchema } from "../validation/authSchemas.js";
 const router = express.Router();
 
 // post / api/ auth/ register
+const DEMO_EMAIL = "demo@studytracker.com";
 router.post("/register", signupLimiter, validate(registerSchema), async (req, res) => {
   const { email, password } = req.body ?? {};
   const existingUser = await User.findOne({ email });
@@ -40,6 +42,9 @@ router.post("/register", signupLimiter, validate(registerSchema), async (req, re
 // post / api/ auth/ login
 router.post("/login", loginLimiter, validate(loginSchema), async (req, res) => {
   const { email, password } = req.body;
+  if (email === DEMO_EMAIL) {
+    throw new AppError(400, "Invalid credentials", "INVALID_CREDENTIALS");
+  }
   const user = await User.findOne({ email });
 
   // Check if user registered with Google
@@ -91,9 +96,9 @@ router.get("/me", auth, async (req, res) => {
 router.post("/demo", signupLimiter, async (req, res) => {
   let demoUser = await User.findOne({ email: "demo@studytracker.com" });
   if (!demoUser) {
-    const hashedPassword = await bcrypt.hash("demo123", 10);
+    const hashedPassword = await bcrypt.hash(randomBytes(32).toString("hex"), 10);
     demoUser = await User.create({
-      email: "demo@studytracker.com",
+      email: DEMO_EMAIL,
       password: hashedPassword,
       isVerified: true,
     });

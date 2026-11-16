@@ -154,7 +154,7 @@ describe("Auth error handling", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("does not leak internal error details on login", async () => {
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(() => { });
     User.findOne.mockRejectedValueOnce(new Error("mongo connection string leaked"));
 
     const res = await request(app)
@@ -249,5 +249,31 @@ describe("Auth input validation", () => {
 
     expect(res.status).toBe(400);
     expect(res.body.code).toBe("INVALID_CREDENTIALS");
+  });
+});
+
+
+describe("Demo account", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("creates the demo user with a random password, not a hardcoded one", async () => {
+    User.findOne.mockResolvedValueOnce(null);
+    User.create.mockResolvedValueOnce({ _id: "new-demo-id" });
+
+    const res = await request(app).post("/api/auth/demo");
+
+    expect(res.status).toBe(200);
+    const { password } = User.create.mock.calls[0][0];
+    expect(await bcrypt.compare("demo123", password)).toBe(false);
+  });
+
+  it("rejects /login with the demo email", async () => {
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send({ email: "Demo@StudyTracker.com", password: "demo123" });
+
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe("INVALID_CREDENTIALS");
+    expect(User.findOne).not.toHaveBeenCalled();
   });
 });
