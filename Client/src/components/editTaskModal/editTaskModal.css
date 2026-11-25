@@ -33,6 +33,14 @@
   border-radius: var(--radius-sm) !important;
 }
 
+.modal-edit-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .img-preview {
   width: 100%;
   max-height: 180px;
