@@ -46,7 +46,7 @@ function EditTaskModal({ task, onSave, onClose }) {
             <button className="btn-close btn-close-sm" onClick={onClose} />
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="modal-edit-form">
             <div className="modal-body pt-3">
               <div className="mb-3">
                 <label className="modal-form-label">Title</label>
